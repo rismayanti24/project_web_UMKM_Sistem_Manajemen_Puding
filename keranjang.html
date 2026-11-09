@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/responsive.css">
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar">
@@ -15,11 +17,11 @@
             <a href="index.html" class="nav-logo">
                 <i class="fas fa-ice-cream"></i> WarungPudding
             </a>
-            
+
             <button class="nav-toggle">
                 <i class="fas fa-bars"></i>
             </button>
-            
+
             <ul class="nav-menu">
                 <li><a href="index.html" class="nav-link">Beranda</a></li>
                 <li><a href="produk.html" class="nav-link">Produk</a></li>
@@ -31,11 +33,6 @@
                         <span class="cart-badge" style="display: none;">0</span>
                     </a>
                 </li>
-                <li>
-                    <a href="login.html" id="navLoginBtn" class="btn btn-primary" style="padding: 8px 20px;">
-                        Login
-                    </a>
-                </li>
             </ul>
         </div>
     </nav>
@@ -43,14 +40,16 @@
     <!-- Header -->
     <div class="page-header">
         <h1>Keranjang Belanja</h1>
-        <p style="color: var(--text-dark); position: relative; z-index: 1;">Periksa kembali pilihan puding terbaikmu sebelum checkout</p>
+        <p style="color: var(--text-dark); position: relative; z-index: 1;">Periksa kembali pilihan puding terbaikmu
+            sebelum checkout</p>
         <div class="floating-badge badge-bazar" style="bottom: 15px; right: 20px;">Bazar GANET</div>
-        <div class="floating-badge badge-halal" style="top: 15px; left: 20px; bottom: auto;"><i class="fas fa-heart" style="color: var(--pink-soft);"></i> Halal & Higienis</div>
+        <div class="floating-badge badge-halal" style="top: 15px; left: 20px; bottom: auto;"><i class="fas fa-heart"
+                style="color: var(--pink-soft);"></i> Halal & Higienis</div>
     </div>
 
     <!-- Main Content -->
     <main class="container mt-4 mb-4">
-        <div class="cart-layout">
+        <div class="cart-layout stretch-layout">
             <!-- Cart Items -->
             <div class="card" id="cartContainer">
                 <div style="text-align: center; padding: 40px;">
@@ -61,8 +60,9 @@
 
             <!-- Cart Summary -->
             <div class="cart-summary" id="cartSummarySection" style="display: none;">
-                <h3 style="margin-bottom: 20px; color: var(--purple-accent);"><i class="fas fa-receipt"></i> Ringkasan Pesanan</h3>
-                
+                <h3 style="margin-bottom: 20px; color: var(--purple-accent);"><i class="fas fa-receipt"></i> Ringkasan
+                    Pesanan</h3>
+
                 <div class="summary-row">
                     <span>Subtotal</span>
                     <span id="summarySubtotal">Rp 0</span>
@@ -71,13 +71,14 @@
                     <span>Ongkos Kirim (Flat)</span>
                     <span id="summaryShipping">Rp 5.000</span>
                 </div>
-                
+
                 <div class="summary-total summary-row">
                     <span>Total Pembayaran</span>
                     <span id="summaryTotal" style="color: var(--pink-soft);">Rp 0</span>
                 </div>
-                
-                <button onclick="window.location.href='checkout.html'" class="btn btn-primary w-100 mt-4" style="width: 100%;">
+
+                <button onclick="window.location.href='checkout.html'" class="btn btn-primary w-100 mt-4"
+                    style="width: 100%;">
                     Lanjut Checkout <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
                 </button>
                 <a href="produk.html" class="btn btn-outline w-100 mt-2" style="width: 100%; display: block;">
@@ -93,10 +94,11 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <h3><i class="fas fa-ice-cream"></i> WarungPudding</h3>
-                    <p style="color: var(--text-light); margin-bottom: 15px;">Puding sehat bentuk lucu kekinian di Tanjungpinang.</p>
+                    <p style="color: #9A90B0; margin-bottom: 15px;">Puding sehat bentuk lucu kekinian di Tanjungpinang. Dibuat dengan cinta & bahan alami berkualitas.</p>
                     <div class="d-flex gap-2">
-                        <a href="https://instagram.com/warung.pudingenz01" target="_blank" style="background: var(--lavender); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--purple-accent);"><i class="fab fa-instagram"></i></a>
-                        <a href="https://wa.me/6283180630769" target="_blank" style="background: var(--lavender); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--purple-accent);"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://instagram.com/warung.pudingenz01" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/6283180630769" target="_blank" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 <div class="footer-links">
@@ -106,14 +108,13 @@
                         <li><a href="produk.html">Katalog Produk</a></li>
                         <li><a href="keranjang.html">Keranjang</a></li>
                         <li><a href="lacak.html">Lacak Pesanan</a></li>
-                        <li><a href="login.html">Login Staff</a></li>
                     </ul>
                 </div>
                 <div class="footer-contact">
                     <h4>Kontak Kami</h4>
-                    <p><i class="fas fa-map-marker-alt" style="color: var(--purple-accent);"></i> Bazar GANET, TPI</p>
-                    <p><i class="fab fa-whatsapp" style="color: var(--purple-accent);"></i> +62 831-8063-0769</p>
-                    <p><i class="fab fa-instagram" style="color: var(--purple-accent);"></i> @warung.pudingenz01</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Bazar GANET, TPI</p>
+                    <p><i class="fab fa-whatsapp"></i> +62 831-8063-0769</p>
+                    <p><i class="fab fa-instagram"></i> @warung.pudingenz01</p>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -124,6 +125,7 @@
 
     <!-- Firebase SDK Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="js/firebase-config.js"></script>
     <script src="js/firebase-sync.js"></script>
@@ -131,25 +133,19 @@
     <script src="js/main.js"></script>
     <script src="js/cart.js"></script>
     <script src="js/auth.js"></script>
-    
+
     <script>
-        // Menunggu seluruh elemen HTML selesai dimuat secara penuh (DOM ready)
         document.addEventListener('DOMContentLoaded', () => {
-            // Memanggil fungsi untuk me-render keranjang belanja awal
             renderCart();
         });
 
-        // Menyatakan fungsi renderCart secara global di objek window agar bisa dipanggil oleh berkas js/cart.js
-        window.renderCart = function() {
-            // Mengambil daftar item belanja di keranjang
+        // Make renderCart accessible globally so cart.js can call it
+        window.renderCart = function () {
             const cart = getCart();
-            // Mendapatkan elemen kontainer tampilan keranjang dan ringkasan subtotal belanjaan
             const cartContainer = document.getElementById('cartContainer');
             const summarySection = document.getElementById('cartSummarySection');
-            
-            // Jika keranjang belanja kosong (tidak ada item)
+
             if (cart.length === 0) {
-                // Tampilkan pesan ilustrasi keranjang kosong beserta tombol kembali belanja
                 cartContainer.innerHTML = `
                     <div style="text-align: center; padding: 60px 20px;">
                         <i class="fas fa-shopping-basket fa-4x" style="color: var(--lavender); margin-bottom: 20px;"></i>
@@ -158,20 +154,17 @@
                         <a href="produk.html" class="btn btn-primary">Mulai Belanja</a>
                     </div>
                 `;
-                // Sembunyikan panel kalkulasi ringkasan harga
                 summarySection.style.display = 'none';
                 return;
             }
 
-            // Menyusun daftar item pesanan secara dinamis
+            // Render Items
             let html = '<h3 style="margin-bottom: 20px; border-bottom: 2px solid #EEE; padding-bottom: 10px;">Item Pesanan</h3>';
-            
+
             cart.forEach(item => {
-                // Menghitung subtotal harga per baris produk (harga x kuantitas)
                 const subtotal = item.harga * item.qty;
                 html += `
                     <div class="cart-item">
-                        <!-- Foto kecil produk belanjaan -->
                         <img src="${item.gambar}" alt="${item.nama}" class="cart-item-img" onerror="this.src='https://placehold.co/80/E6CCFF/9B59B6?text=Puding'">
                         <div class="cart-item-info">
                             <h4 style="margin-bottom: 5px;">${item.nama}</h4>
@@ -179,13 +172,11 @@
                             <p style="color: var(--pink-soft); font-weight: bold; margin-bottom: 10px;">${formatRupiah(item.harga)}</p>
                             
                             <div class="d-flex justify-content-between align-items-center">
-                                <!-- Tombol minus, jumlah qty, dan plus untuk kuantitas belanjaan -->
                                 <div class="qty-input">
                                     <button class="qty-btn" style="width: 30px; height: 30px;" onclick="updateQty('${item.cartItemId || item.id}', -1)">-</button>
                                     <input type="text" value="${item.qty}" readonly style="width: 40px; border: none; background: transparent; text-align: center; font-weight: bold;">
                                     <button class="qty-btn" style="width: 30px; height: 30px;" onclick="updateQty('${item.cartItemId || item.id}', 1)">+</button>
                                 </div>
-                                <!-- Tombol Hapus Item -->
                                 <button onclick="removeFromCart('${item.cartItemId || item.id}')" class="btn" style="color: var(--purple-accent); background: none; border: none; padding: 5px;">
                                     <i class="fas fa-trash-alt"></i> Hapus
                                 </button>
@@ -197,28 +188,27 @@
                     </div>
                 `;
             });
-            
-            // Injeksi baris keranjang yang selesai disusun ke dalam HTML
+
             cartContainer.innerHTML = html;
 
-            // Menghitung ringkasan biaya akhir belanjaan
+            // Render Summary
             const subtotal = getCartTotal();
-            // Menentukan ongkos kirim datar simulasi sebesar Rp 5.000
             const shipping = 5000;
             const total = subtotal + shipping;
-            
-            // Mengisi data nominal teks ke layout ringkasan belanja
+
             document.getElementById('summarySubtotal').textContent = formatRupiah(subtotal);
             document.getElementById('summaryTotal').textContent = formatRupiah(total);
-            
-            // Tampilkan panel ringkasan belanja
+
             summarySection.style.display = 'block';
         };
     </script>
     <style>
         @media (min-width: 768px) {
-            .desktop-subtotal { display: block !important; }
+            .desktop-subtotal {
+                display: block !important;
+            }
         }
     </style>
 </body>
+
 </html>

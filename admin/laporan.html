@@ -43,11 +43,11 @@
             </div>
             
             <!-- Filters -->
-            <div class="dashboard-card mb-4 d-flex gap-3 align-items-center" style="padding: 15px 20px;">
+            <div class="dashboard-card mb-4 d-flex gap-3 align-items-center" style="padding: 15px 20px;" id="dateFilters">
                 <span style="font-weight: bold; color: var(--text-light);"><i class="fas fa-filter"></i> Filter:</span>
-                <button class="btn btn-primary" style="padding: 5px 15px; border-radius: 8px;">Hari Ini</button>
-                <button class="btn btn-outline" style="padding: 5px 15px; border-radius: 8px;">Minggu Ini</button>
-                <button class="btn btn-outline" style="padding: 5px 15px; border-radius: 8px;">Bulan Ini</button>
+                <button class="btn btn-primary date-filter-btn" data-filter="today" style="padding: 5px 15px; border-radius: 8px;">Hari Ini</button>
+                <button class="btn btn-outline date-filter-btn" data-filter="week" style="padding: 5px 15px; border-radius: 8px;">Minggu Ini</button>
+                <button class="btn btn-outline date-filter-btn" data-filter="month" style="padding: 5px 15px; border-radius: 8px;">Bulan Ini</button>
             </div>
 
             <!-- Stats -->
@@ -113,6 +113,7 @@
 
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="../js/firebase-config.js"></script>
     <script src="../js/firebase-sync.js"></script>
@@ -122,44 +123,42 @@
     <script src="../js/main.js"></script>
     <script>
         // Menunggu seluruh struktur HTML selesai dimuat (DOM ready) sebelum menjalankan kode JS
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // Melindungi halaman: memeriksa hak akses pengguna. Hanya peran 'admin' yang boleh masuk
-            const user = checkAuth('admin');
+            const user = await checkAuth('admin');
             // Jika pengguna tidak terverifikasi atau bukan admin, hentikan proses (halaman dialihkan oleh checkAuth)
             if (!user) return;
 
             // Mendapatkan elemen canvas 2D untuk merender grafik Chart.js
             const ctx = document.getElementById('revenueChart').getContext('2d');
             
-            // Konfigurasi data untuk grafik pendapatan mingguan
+            // Konfigurasi data untuk grafik pendapatan
             const chartData = {
-                // Label sumbu X: Menampilkan hari-hari dalam seminggu
-                labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+                labels: [],
                 datasets: [{
-                    label: 'Pendapatan (Rp)', // Label dataset saat kursor diarahkan ke grafik
-                    data: [150000, 320000, 210000, 180000, 450000, 850000, 720000], // Data dummy pendapatan per hari
-                    backgroundColor: 'rgba(255, 182, 193, 0.5)', // Warna latar area grafik (Pink Soft dengan transparansi)
-                    borderColor: '#FFB6C1', // Warna garis luar grafik (Pink Soft solid)
-                    borderWidth: 2, // Ketebalan garis grafik sebesar 2 piksel
-                    fill: true, // Mengaktifkan efek pewarnaan area di bawah garis
-                    tension: 0.4 // Membuat lekukan garis grafik menjadi lebih melengkung halus (smooth curve)
+                    label: 'Pendapatan (Rp)',
+                    data: [],
+                    backgroundColor: 'rgba(255, 182, 193, 0.5)',
+                    borderColor: '#FFB6C1',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
                 }]
             };
             
             // Membuat instansiasi grafik baru menggunakan pustaka Chart.js
-            new Chart(ctx, {
-                type: 'line', // Jenis grafik: Garis (Line Chart)
-                data: chartData, // Memasukkan konfigurasi data yang telah dibuat sebelumnya
+            const revenueChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
                 options: {
-                    responsive: true, // Grafik otomatis menyesuaikan ukuran layar (responsif)
+                    responsive: true,
                     plugins: { 
-                        legend: { display: false } // Menyembunyikan kotak legenda di atas grafik
+                        legend: { display: false }
                     },
                     scales: {
                         y: { 
-                            beginAtZero: true, // Memaksa nilai sumbu Y dimulai dari angka 0
+                            beginAtZero: true,
                             ticks: {
-                                // Mengubah format tampilan angka di sumbu Y (misal: 100000 menjadi Rp 100k)
                                 callback: function(value) {
                                     return 'Rp ' + (value/1000) + 'k';
                                 }
@@ -169,13 +168,109 @@
                 }
             });
 
+            let currentFilter = 'today';
+
+            // Menangani filter tanggal
+            const filterBtns = document.querySelectorAll('.date-filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => {
+                        b.classList.remove('btn-primary');
+                        b.classList.add('btn-outline');
+                    });
+                    btn.classList.remove('btn-outline');
+                    btn.classList.add('btn-primary');
+
+                    currentFilter = btn.getAttribute('data-filter');
+                    refreshLaporan();
+                });
+            });
+
+            // Fungsi pembantu untuk mengupdate data grafik berdasarkan filter dan pesanan
+            function updateChart(filter, filteredOrders) {
+                let labels = [];
+                let data = [];
+
+                if (filter === 'today') {
+                    // Group by 3-hour blocks: 00:00, 03:00, 06:00, 09:00, 12:00, 15:00, 18:00, 21:00
+                    labels = ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'];
+                    data = Array(8).fill(0);
+                    filteredOrders.forEach(o => {
+                        try {
+                            const hours = new Date(o.tanggal).getHours();
+                            const blockIndex = Math.floor(hours / 3);
+                            if (blockIndex >= 0 && blockIndex < 8) {
+                                data[blockIndex] += (o.total || 0);
+                            }
+                        } catch(e) {}
+                    });
+                } else if (filter === 'week') {
+                    // Group by the last 7 calendar days ending today
+                    const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                    for (let i = 6; i >= 0; i--) {
+                        const d = new Date();
+                        d.setDate(d.getDate() - i);
+                        labels.push(dayNames[d.getDay()]);
+                        
+                        const revenue = filteredOrders.filter(o => {
+                            try {
+                                return new Date(o.tanggal).toDateString() === d.toDateString();
+                            } catch(e) { return false; }
+                        }).reduce((sum, o) => sum + (o.total || 0), 0);
+                        data.push(revenue);
+                    }
+                } else if (filter === 'month') {
+                    // Group by weeks of the month: Minggu 1, Minggu 2, Minggu 3, Minggu 4
+                    labels = ['Mgg 1 (1-7)', 'Mgg 2 (8-14)', 'Mgg 3 (15-21)', 'Mgg 4 (22+)'];
+                    data = Array(4).fill(0);
+                    filteredOrders.forEach(o => {
+                        try {
+                            const dateNum = new Date(o.tanggal).getDate();
+                            if (dateNum <= 7) data[0] += (o.total || 0);
+                            else if (dateNum <= 14) data[1] += (o.total || 0);
+                            else if (dateNum <= 21) data[2] += (o.total || 0);
+                            else data[3] += (o.total || 0);
+                        } catch(e) {}
+                    });
+                }
+
+                if (revenueChartInstance) {
+                    revenueChartInstance.data.labels = labels;
+                    revenueChartInstance.data.datasets[0].data = data;
+                    revenueChartInstance.update();
+                }
+            }
+
             // Fungsi utama untuk memuat ulang dan menghitung statistik laporan penjualan
             function refreshLaporan() {
                 // Mengambil data pesanan dari LocalStorage, jika kosong gunakan array kosong []
                 const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
                 // Menyaring daftar pesanan yang hanya memiliki status "Selesai" untuk dimasukkan ke laporan
-                const completedOrders = orders.filter(o => o.status === 'Selesai');
+                let completedOrders = orders.filter(o => o.status === 'Selesai');
                 
+                // Menyaring berdasarkan filter tanggal yang aktif
+                const today = new Date();
+                completedOrders = completedOrders.filter(o => {
+                    if (!o.tanggal) return false;
+                    try {
+                        const orderDate = new Date(o.tanggal);
+                        if (currentFilter === 'today') {
+                            return orderDate.toDateString() === today.toDateString();
+                        } else if (currentFilter === 'week') {
+                            const diffTime = today - orderDate;
+                            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+                            return diffDays >= 0 && diffDays <= 7;
+                        } else if (currentFilter === 'month') {
+                            return orderDate.getMonth() === today.getMonth() && orderDate.getFullYear() === today.getFullYear();
+                        }
+                    } catch (e) {
+                        return false;
+                    }
+                });
+
+                // Sort by date descending (newest first)
+                completedOrders.sort((a, b) => new Date(b.tanggal || 0) - new Date(a.tanggal || 0));
+
                 // Menampilkan total jumlah pesanan selesai ke elemen HTML 'lapTotalPesanan'
                 document.getElementById('lapTotalPesanan').textContent = completedOrders.length;
 
@@ -224,8 +319,7 @@
                         <tr>
                             <td colspan="5" class="text-center py-4" style="padding: 30px;">
                                 <i class="fas fa-clipboard-check fa-2x" style="color: var(--lavender); margin-bottom: 10px; display: block;"></i>
-                                <p class="text-muted">Belum ada pesanan dengan status "Selesai".</p>
-                                <p class="text-muted" style="font-size: 0.85rem;">Ubah status pesanan menjadi Selesai melalui halaman Karyawan.</p>
+                                <p class="text-muted">Belum ada pesanan dengan status "Selesai" untuk periode ini.</p>
                             </td>
                         </tr>
                     `;
@@ -264,6 +358,9 @@
                         `;
                     }).join(''); // Menggabungkan seluruh baris HTML menjadi satu string utuh
                 }
+
+                // Update data grafik
+                updateChart(currentFilter, completedOrders);
             }
 
             // Memanggil fungsi refreshLaporan untuk pengisian data awal saat halaman pertama dibuka

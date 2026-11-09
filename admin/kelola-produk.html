@@ -110,12 +110,14 @@
                     <div class="form-group" style="flex: 1;">
                         <label class="form-label">Foto Produk</label>
                         <select id="prodGambar" class="form-control">
+                            <option value="images/Puding Coklat Dino.jpg">Puding Coklat Dino</option>
+                            <option value="images/Puding Mangga Dino.jpg">Puding Mangga Dino</option>
                             <option value="images/kaki kucing puding.jpg">Kaki Kucing Puding</option>
                             <option value="images/kelinci puding.jpeg">Kelinci Puding</option>
                             <option value="images/puding dino.jpg">Puding Dino</option>
                             <option value="images/puding tusuk.jpg">Puding Tusuk</option>
-                            <option value="images/dino blue.jpg">Dino Blue</option>
-                            <option value="images/dino pink.jpg">Dino Pink</option>
+                            <option value="images/dino blue.jpg">Permen Karet Dino</option>
+                            <option value="images/dino pink.jpg">Strawberry Dino</option>
                         </select>
                         <small style="color: var(--text-light);">(Simulasi upload foto)</small>
                     </div>
@@ -136,6 +138,7 @@
 
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="../js/firebase-config.js"></script>
     <script src="../js/firebase-sync.js"></script>
@@ -145,33 +148,25 @@
     <script src="../js/main.js"></script>
     <script src="../js/cart.js"></script>
     <script>
-        // Menunggu seluruh elemen HTML halaman selesai dimuat (DOM ready)
-        document.addEventListener('DOMContentLoaded', () => {
-            // Melindungi halaman: memeriksa apakah peran pengguna saat ini adalah 'admin'
-            const user = checkAuth('admin');
-            // Jika tidak terverifikasi atau bukan admin, hentikan proses (halaman otomatis diredirect oleh checkAuth)
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Protect Page - stop execution if not authorized
+            const user = await checkAuth('admin');
             if (!user) return;
             
-            // Me-render tabel produk untuk pertama kali
             renderProductsTable();
 
-            // Mendengarkan pembaruan data real-time produk dari Firebase sync event
+            // Listen to firebase-sync updates for real-time table updates
             window.addEventListener('wp_products_sync', () => {
-                // Gambar ulang tabel produk jika ada perubahan data di Firebase cloud
                 renderProductsTable();
             });
 
-            // Menangani pengiriman formulir tambah/edit produk (Submit Form)
+            // Handle Form Submit
             document.getElementById('productForm').addEventListener('submit', (e) => {
-                // Membatalkan aksi default submit form (agar halaman tidak memuat ulang)
                 e.preventDefault();
                 
-                // Jika ID produk kosong, buat ID acak (misal: p748), jika tidak, gunakan ID produk yang sedang diedit
                 const id = document.getElementById('prodId').value || 'p' + Math.floor(Math.random() * 1000);
-                // Flag penanda apakah ini penambahan produk baru (isNew) atau memperbarui produk lama
                 const isNew = !document.getElementById('prodId').value;
                 
-                // Menyusun objek data produk dari nilai-nilai input form
                 const productData = {
                     id: id,
                     nama: document.getElementById('prodNama').value,
@@ -180,30 +175,24 @@
                     stok: parseInt(document.getElementById('prodStok').value),
                     gambar: document.getElementById('prodGambar').value,
                     deskripsi: document.getElementById('prodDeskripsi').value,
-                    tersedia: parseInt(document.getElementById('prodStok').value) > 0 // Tersedia jika stok > 0
+                    tersedia: parseInt(document.getElementById('prodStok').value) > 0
                 };
 
-                // Mengambil seluruh produk yang ada saat ini dari LocalStorage
                 const products = getProducts();
                 
-                // Jika menambahkan produk baru
                 if (isNew) {
-                    // Masukkan data produk baru ke array produk
                     products.push(productData);
                     showToast('Produk berhasil ditambahkan!');
                 } else {
-                    // Jika mengedit, cari indeks produk lama berdasarkan ID produk
                     const idx = products.findIndex(p => p.id === id);
                     if (idx > -1) {
-                        // Perbarui data produk pada indeks tersebut dengan data baru
                         products[idx] = productData;
                         showToast('Produk berhasil diperbarui!');
                     }
                 }
                 
-                // Menyimpan array produk yang diperbarui ke path 'products' di Firebase Realtime Database
+                // Simpan ke Firebase Realtime Database
                 db.ref('products').set(products).then(() => {
-                    // Tutup modal form setelah data berhasil tersimpan di Firebase
                     closeModal('productModal');
                 }).catch(err => {
                     console.error("Gagal menyimpan ke Firebase:", err);
@@ -212,29 +201,22 @@
             });
         });
 
-        // Fungsi untuk me-render tabel daftar produk admin secara dinamis
         function renderProductsTable() {
-            // Mengambil daftar produk
             const products = getProducts();
             const tbody = document.getElementById('productsTableBody');
             
-            // Jika produk kosong
             if (products.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4">Belum ada produk.</td></tr>';
                 return;
             }
 
-            // Menyusun baris-baris tabel produk dinamis
             tbody.innerHTML = products.map((p, index) => {
-                // Menentukan warna tulisan stok berdasarkan sisa stok puding
-                // Hijau jika > 10, Orange jika > 0, Merah jika habis (0)
                 const stockColor = p.stok > 10 ? 'color: #2ECC71;' : p.stok > 0 ? 'color: #F39C12;' : 'color: #E74C3C;';
                 
                 return `
                     <tr>
                         <td>${index + 1}</td>
                         <td>
-                            <!-- Foto produk dengan fallback otomatis jika gambar gagal termuat -->
                             <img src="../${p.gambar}" alt="${p.nama}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://placehold.co/50/E6CCFF/9B59B6'">
                         </td>
                         <td style="font-weight: 600;">${p.nama}</td>
@@ -242,40 +224,39 @@
                         <td>Rp ${p.harga.toLocaleString('id-ID')}</td>
                         <td style="font-weight: bold; ${stockColor}">${p.stok}</td>
                         <td>
-                            <!-- Tombol Edit -->
                             <button onclick="editProduct('${p.id}')" class="btn" style="background: var(--lavender); color: var(--purple-accent); padding: 5px 10px; margin-right: 5px;">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <!-- Tombol Hapus -->
                             <button onclick="deleteProduct('${p.id}')" class="btn" style="background: #FDEDEC; color: #E74C3C; padding: 5px 10px;">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </td>
                     </tr>
                 `;
-            }).join(''); // Menggabungkan baris HTML menjadi satu string
+            }).join('');
         }
 
-        // Jendela pembantu untuk membuka formulir modal tambah produk
         window.openProductModal = function() {
-            // Mereset isi formulir agar bersih
             document.getElementById('productForm').reset();
-            // Mengosongkan input ID produk tersembunyi
             document.getElementById('prodId').value = '';
-            // Mengubah judul modal menjadi tambah produk
             document.getElementById('modalTitle').textContent = 'Tambah Produk';
-            // Membuka modal
+            
+            // Adjust image paths for admin relative to root
+            const imgSelect = document.getElementById('prodGambar');
+            Array.from(imgSelect.options).forEach(opt => {
+                if(!opt.value.startsWith('../')) {
+                   // Keep the value as images/... but we display it normally
+                }
+            });
+
             openModal('productModal');
         };
 
-        // Fungsi global untuk membuka formulir modal edit produk dan memuat data produk ke form
         window.editProduct = function(id) {
             const products = getProducts();
-            // Mencari objek produk terpilih berdasarkan ID
             const product = products.find(p => p.id === id);
             
             if (product) {
-                // Memasukkan data produk ke masing-masing input form
                 document.getElementById('prodId').value = product.id;
                 document.getElementById('prodNama').value = product.nama;
                 document.getElementById('prodKategori').value = product.kategori;
@@ -284,24 +265,17 @@
                 document.getElementById('prodGambar').value = product.gambar;
                 document.getElementById('prodDeskripsi').value = product.deskripsi;
                 
-                // Mengubah judul modal menjadi edit produk
                 document.getElementById('modalTitle').textContent = 'Edit Produk';
-                // Membuka modal
                 openModal('productModal');
             }
         };
 
-        // Fungsi global untuk menghapus produk dari database
         window.deleteProduct = function(id) {
-            // Meminta konfirmasi pembatalan/penghapusan dari pengguna
             if (confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
                 let products = getProducts();
-                // Menyaring array untuk membuang produk yang memiliki ID terpilih
                 products = products.filter(p => p.id !== id);
-                // Simpan daftar produk terbaru hasil penyaringan ke Firebase
                 db.ref('products').set(products).then(() => {
-                    // Tampilkan toast pemberitahuan sukses hapus
-                    showToast('Produk dihapus!', 'error'); 
+                    showToast('Produk dihapus!', 'error'); // Using error style for deletion toast
                 }).catch(err => {
                     console.error("Gagal menghapus dari Firebase:", err);
                     showToast('Gagal menghapus produk dari database cloud!', 'error');

@@ -151,6 +151,7 @@
 
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="../js/firebase-config.js"></script>
     <script src="../js/firebase-sync.js"></script>
@@ -159,24 +160,16 @@
     <script src="../js/auth.js"></script>
     <script src="../js/main.js"></script>
     <script>
-        // Menunggu seluruh elemen HTML halaman web selesai dimuat secara penuh
-        document.addEventListener('DOMContentLoaded', () => {
-            // Melindungi halaman: memeriksa apakah peran pengguna saat ini adalah 'karyawan'
-            const user = checkAuth('karyawan');
-            // Jika tidak terverifikasi atau bukan karyawan, batalkan pemuatan naskah script
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await checkAuth('karyawan');
             if (!user) return;
 
-            // Mendapatkan kontainer elemen body tabel tempat menampilkan produk
             const productsTableBody = document.getElementById('productsTableBody');
 
-            // Fungsi utama untuk memuat data produk ke tabel
             function renderProducts() {
-                // Mengambil daftar produk dari LocalStorage, jika kosong inisialisasi sebagai array kosong []
                 const products = JSON.parse(localStorage.getItem('wp_products')) || [];
 
-                // Jika data produk belum ada sama sekali
                 if (products.length === 0) {
-                    // Tampilkan baris pemberitahuan bahwa produk kosong
                     productsTableBody.innerHTML = `
                         <tr>
                             <td colspan="7" class="text-center" style="padding: 40px;">
@@ -188,33 +181,25 @@
                     return;
                 }
 
-                // Menyusun baris tabel produk secara dinamis menggunakan perulangan map()
                 productsTableBody.innerHTML = products.map((p, idx) => {
-                    // Memeriksa status ketersediaan berdasarkan jumlah stok aktif
                     const isAvailable = p.stok > 0;
-                    // Menentukan kelas CSS visual tombol status (hijau jika tersedia, merah jika habis)
                     const statusClass = isAvailable ? 'status-available' : 'status-unavailable';
-                    // Menentukan teks status
                     const statusText = isAvailable ? 'Tersedia' : 'Habis';
 
-                    // Mengembalikan baris baris tabel HTML produk
                     return `
                         <tr>
                             <td>${idx + 1}</td>
                             <td>
-                                <!-- Foto produk dengan fallback otomatis jika url gambar bermasalah -->
                                 <img src="../${p.gambar}" alt="${p.nama}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://placehold.co/50/E6CCFF/9B59B6?text=Puding'">
                             </td>
                             <td style="font-weight: 600;">${p.nama}</td>
                             <td><span class="badge" style="background: var(--bg-light); color: var(--purple-accent);">${p.kategori}</span></td>
                             <td>
-                                <!-- Tombol status interaktif untuk mengubah status stok secara langsung -->
                                 <button onclick="toggleStatus('${p.id}', ${p.stok})" class="status-badge ${statusClass}">
                                     <i class="fas ${isAvailable ? 'fa-check-circle' : 'fa-times-circle'} fa-fw"></i> ${statusText}
                                 </button>
                             </td>
                             <td>
-                                <!-- Tombol minus & plus untuk pengaturan kuantitas stok secara presisi -->
                                 <div class="stock-control">
                                     <button onclick="changeStock('${p.id}', -1)" class="stock-btn"><i class="fas fa-minus"></i></button>
                                     <span class="stock-val">${p.stok}</span>
@@ -222,7 +207,6 @@
                                 </div>
                             </td>
                             <td>
-                                <!-- Tombol aksi cepat untuk mempermudah operasional karyawan stand -->
                                 <div style="display: flex; gap: 8px;">
                                     <button onclick="setQuickStock('${p.id}', 0)" class="quick-action-btn btn-set-unavailable">
                                         <i class="fas fa-ban fa-fw"></i> Set Habis
@@ -234,32 +218,23 @@
                             </td>
                         </tr>
                     `;
-                }).join(''); // Menggabungkan seluruh baris HTML menjadi satu string utuh
+                }).join('');
             }
 
-            // Mendengarkan pembaruan data real-time produk dari Firebase sync event
+            // Listen to firebase-sync updates for real-time table updates
             window.addEventListener('wp_products_sync', () => {
-                // Render ulang daftar produk tanpa refresh halaman saat ada data terubah
                 renderProducts();
             });
 
-            // Fungsi global untuk menaikkan atau menurunkan jumlah stok produk secara presisi (+1/-1)
             window.changeStock = function(prodId, delta) {
-                // Mengambil produk lokal
                 const products = JSON.parse(localStorage.getItem('wp_products')) || [];
-                // Mencari indeks produk terkait berdasarkan ID
                 const idx = products.findIndex(p => p.id === prodId);
                 if (idx > -1) {
-                    // Hitung jumlah stok baru, batas minimal adalah 0 (stok tidak boleh negatif)
                     const newStock = Math.max(0, products[idx].stok + delta);
-                    // Lakukan pembaruan jika nilainya memang berubah
                     if (products[idx].stok !== newStock) {
                         products[idx].stok = newStock;
-                        // Set ketersediaan produk (true jika stok > 0, false jika stok 0)
                         products[idx].tersedia = newStock > 0;
-                        // Simpan kembali array produk yang diperbarui ke Firebase cloud
                         db.ref('products').set(products).then(() => {
-                            // Tampilkan toast info perubahan stok sukses
                             showToast(`Stok ${products[idx].nama} diperbarui menjadi ${newStock}!`);
                         }).catch(err => {
                             console.error("Gagal update stok di Firebase:", err);
@@ -269,16 +244,13 @@
                 }
             };
 
-            // Fungsi global untuk mengubah status ketersediaan puding secara instan (Tersedia <-> Habis)
             window.toggleStatus = function(prodId, currentStock) {
                 const products = JSON.parse(localStorage.getItem('wp_products')) || [];
                 const idx = products.findIndex(p => p.id === prodId);
                 if (idx > -1) {
-                    // Jika stok aktif > 0, set stok menjadi 0 (Habis). Jika kosong, set stok ke default 20 (Tersedia)
                     const newStock = currentStock > 0 ? 0 : 20;
                     products[idx].stok = newStock;
                     products[idx].tersedia = newStock > 0;
-                    // Kirim pembaruan ke Firebase
                     db.ref('products').set(products).then(() => {
                         showToast(`Status ${products[idx].nama} diubah menjadi ${newStock > 0 ? 'Tersedia' : 'Habis'}!`);
                     }).catch(err => {
@@ -288,16 +260,13 @@
                 }
             };
 
-            // Fungsi global untuk aksi cepat menyetel jumlah stok ke angka tertentu (misal: 0 atau 20)
             window.setQuickStock = function(prodId, targetStock) {
                 const products = JSON.parse(localStorage.getItem('wp_products')) || [];
                 const idx = products.findIndex(p => p.id === prodId);
                 if (idx > -1) {
-                    // Hanya perbarui jika nilai stok target berbeda dengan stok saat ini
                     if (products[idx].stok !== targetStock) {
                         products[idx].stok = targetStock;
                         products[idx].tersedia = targetStock > 0;
-                        // Kirim pembaruan ke Firebase
                         db.ref('products').set(products).then(() => {
                             showToast(`Stok ${products[idx].nama} diset ke ${targetStock}!`);
                         }).catch(err => {
@@ -308,7 +277,6 @@
                 }
             };
 
-            // Panggilan pertama render produk untuk menampilkan data awal saat halaman selesai dimuat
             renderProducts();
         });
     </script>

@@ -14,7 +14,7 @@
             justify-content: space-between;
             align-items: center;
             position: relative;
-            margin: 50px 0;
+            margin: 25px 0 35px;
             padding: 0 10px;
         }
         
@@ -24,8 +24,8 @@
             top: 50%;
             left: 0;
             right: 0;
-            height: 4px;
-            background: #E2E8F0;
+            height: var(--border-width);
+            background: var(--purple-dark);
             transform: translateY(-50%);
             z-index: 1;
         }
@@ -34,34 +34,19 @@
             position: absolute;
             top: 50%;
             left: 0;
-            height: 4px;
-            background: linear-gradient(to right, var(--pink-soft), var(--purple-accent));
+            height: var(--border-width);
+            background: var(--purple-accent);
             transform: translateY(-50%);
             z-index: 2;
             transition: width 0.5s ease;
             width: 0%;
-        }
-        
-        @keyframes stepPulse {
-            0% {
-                box-shadow: 0 0 0 0 rgba(155, 89, 182, 0.4);
-                transform: scale(1);
-            }
-            70% {
-                box-shadow: 0 0 0 12px rgba(155, 89, 182, 0);
-                transform: scale(1.05);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(155, 89, 182, 0);
-                transform: scale(1);
-            }
         }
 
         .timeline-step {
             position: relative;
             z-index: 3;
             background: var(--white);
-            border: 3.5px solid #E2E8F0;
+            border: var(--border-width) solid var(--purple-dark);
             width: 56px;
             height: 56px;
             border-radius: 50%;
@@ -70,21 +55,22 @@
             justify-content: center;
             font-size: 1.25rem;
             color: var(--text-light);
-            box-shadow: var(--shadow-sm);
+            box-shadow: var(--shadow-solid-sm);
             transition: all 0.4s ease;
         }
         
         .timeline-step.active {
-            border-color: var(--purple-accent);
-            color: var(--purple-accent);
-            animation: stepPulse 2s infinite;
+            border-color: var(--purple-dark);
+            color: var(--purple-dark);
+            background: var(--lavender);
+            box-shadow: var(--shadow-solid-sm);
         }
         
         .timeline-step.completed {
-            border-color: var(--purple-accent);
+            border-color: var(--purple-dark);
             background: var(--purple-accent);
             color: var(--white);
-            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.25);
+            box-shadow: var(--shadow-solid-sm);
         }
         
         .step-label {
@@ -94,7 +80,7 @@
             transform: translateX(-50%);
             white-space: nowrap;
             font-size: 0.9rem;
-            font-weight: 700;
+            font-weight: 800;
             color: var(--text-light);
         }
         
@@ -109,8 +95,8 @@
         .lacak-search-container {
             max-width: 600px;
             margin: 0 auto 40px;
-            border: 1px solid rgba(155, 89, 182, 0.1);
-            box-shadow: var(--shadow-sm);
+            border: var(--border-width) solid var(--purple-dark);
+            box-shadow: var(--shadow-solid);
         }
  
         @media (max-width: 768px) {
@@ -124,16 +110,16 @@
                 top: 0;
                 bottom: 0;
                 left: 55px;
-                width: 4px;
+                width: var(--border-width);
                 height: 100%;
                 transform: none;
             }
             .timeline-progress {
                 top: 0;
                 left: 55px;
-                width: 4px;
+                width: var(--border-width);
                 height: 0%;
-                background: linear-gradient(to bottom, var(--pink-soft), var(--purple-accent));
+                background: var(--purple-accent);
                 transform: none;
             }
             .timeline-step {
@@ -170,11 +156,6 @@
                     <a href="keranjang.html" class="nav-link nav-cart-link">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="cart-badge" style="display: none;">0</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="login.html" id="navLoginBtn" class="btn btn-primary" style="padding: 8px 20px;">
-                        Login
                     </a>
                 </li>
             </ul>
@@ -239,7 +220,7 @@
                         </div>
                     </div>
 
-                    <div style="margin-top: 50px; background-color: var(--bg-light); padding: 20px; border-radius: var(--border-radius-sm);">
+                    <div style="margin-top: 25px; background-color: var(--bg-light); padding: 20px; border-radius: var(--border-radius-sm);">
                         <h4 class="mb-2" style="color: var(--purple-dark);"><i class="fas fa-map-marker-alt"></i> Detail Pengiriman:</h4>
                         <table style="width: 100%; border-collapse: collapse; font-size: 0.95rem;">
                             <tr>
@@ -275,6 +256,10 @@
                             <span>Metode Pembayaran</span>
                             <span id="resMetodePembayaran" style="font-weight: bold; color: var(--text-dark);">-</span>
                         </div>
+                        <div class="summary-row" style="align-items: center;">
+                            <span>Status Pembayaran</span>
+                            <span id="resStatusPembayaran" class="badge">-</span>
+                        </div>
                         <div class="summary-row">
                             <span>Subtotal</span>
                             <span id="resSubtotal">Rp 0</span>
@@ -290,7 +275,12 @@
                         </div>
                     </div>
 
-                    <a id="resWaContactBtn" href="#" target="_blank" class="btn btn-secondary w-100 mt-4" style="width: 100%; display: flex; align-items: center; justify-content: center; background: var(--purple-accent); color: white;">
+                    <div id="lacakInstructionsContainer" class="card mt-3" style="display: none; padding: 15px; border: 2px solid var(--purple-dark); background: #FAF5FF; margin-top: 15px; border-radius: 8px; box-shadow: var(--shadow-solid-sm);">
+                        <!-- Injected via JS -->
+                    </div>
+
+
+                    <a id="resWaContactBtn" href="#" target="_blank" class="btn btn-secondary w-100 mt-3" style="width: 100%; display: flex; align-items: center; justify-content: center; background: var(--purple-accent); color: white;">
                         <i class="fab fa-whatsapp" style="margin-right: 8px; font-size: 1.2rem;"></i> Hubungi WhatsApp Stand
                     </a>
                 </div>
@@ -308,13 +298,42 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container text-center text-muted">
-            &copy; 2026 WarungPudding UMKM Tanjungpinang. All rights reserved.
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3><i class="fas fa-ice-cream"></i> WarungPudding</h3>
+                    <p style="color: #9A90B0; margin-bottom: 15px;">Puding sehat bentuk lucu kekinian di Tanjungpinang. Dibuat dengan cinta & bahan alami berkualitas.</p>
+                    <div class="d-flex gap-2">
+                        <a href="https://instagram.com/warung.pudingenz01" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/6283180630769" target="_blank" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Navigasi</h4>
+                    <ul>
+                        <li><a href="index.html">Beranda</a></li>
+                        <li><a href="produk.html">Katalog Produk</a></li>
+                        <li><a href="keranjang.html">Keranjang</a></li>
+                        <li><a href="lacak.html">Lacak Pesanan</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Kontak Kami</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> Bazar GANET, TPI</p>
+                    <p><i class="fab fa-whatsapp"></i> +62 831-8063-0769</p>
+                    <p><i class="fab fa-instagram"></i> @warung.pudingenz01</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 WarungPudding UMKM Tanjungpinang. All rights reserved.
+            </div>
         </div>
     </footer>
 
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="js/firebase-config.js"></script>
     <script src="js/firebase-sync.js"></script>
@@ -324,94 +343,62 @@
     <script src="js/auth.js"></script>
     
     <script>
-        // Menunggu seluruh elemen HTML halaman selesai dimuat secara penuh (DOM ready)
         document.addEventListener('DOMContentLoaded', () => {
-            // Membaca parameter query string 'id' dari URL (contoh: lacak.html?id=WP-7462)
+            // Check if there is an ID in the URL parameter (e.g. lacak.html?id=WP-123456)
             const urlParams = new URLSearchParams(window.location.search);
             const queryId = urlParams.get('id');
-            
-            // Jika parameter 'id' ditemukan di URL (misal user datang dari link notifikasi)
             if (queryId) {
-                // Isi nilai input pencarian secara otomatis dengan ID pesanan tersebut
                 document.getElementById('lacakOrderId').value = queryId;
-                // Jalankan proses pelacakan untuk ID pesanan tersebut
                 trackOrder(queryId);
             }
 
-            // Menangani klik tombol cari / submit pada form pelacakan
             document.getElementById('lacakForm').addEventListener('submit', (e) => {
-                // Mencegah formulir dari memuat ulang halaman secara bawaan (default submit behavior)
                 e.preventDefault();
-                // Mengambil nilai teks input ID Pesanan, menghapus spasi di awal/akhir, dan mengubah ke huruf besar
                 const orderId = document.getElementById('lacakOrderId').value.trim().toUpperCase();
                 
-                // Membangun URL baru dengan query string ID agar halaman bisa dibookmark
+                // Update URL parameter without reloading page for bookmarkability
                 const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + orderId;
-                // Memperbarui history URL browser tanpa memicu muat ulang halaman (reload)
                 window.history.pushState({path:newUrl}, '', newUrl);
 
-                // Jalankan fungsi utama pelacakan berdasarkan ID pesanan
                 trackOrder(orderId);
             });
 
-            // Mendengarkan event kustom sinkronisasi database pesanan real-time dari Firebase
+            // Listen to firebase-sync updates for real-time tracking updates
             window.addEventListener('wp_orders_sync', (e) => {
-                // Mendapatkan ID pesanan yang saat ini sedang dicari/diinput oleh pengguna
                 const currentOrderId = document.getElementById('lacakOrderId').value.trim().toUpperCase();
-                // Jika pengguna sedang melacak ID pesanan tersebut
                 if (currentOrderId) {
-                    // Render ulang rincian pesanan secara real-time berdasarkan data awan Firebase terbaru
                     trackOrder(currentOrderId);
                 }
             });
         });
 
-        // Fungsi utama untuk mengambil data pesanan dan menggambar rincian status pelacakan di UI
         function trackOrder(orderId) {
-            // Mengambil daftar pesanan dari LocalStorage (atau array kosong jika belum ada)
             const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
-            // Mencari objek data pesanan yang memiliki ID cocok dengan yang dicari
             const order = orders.find(o => o.id === orderId);
 
-            // Mendapatkan referensi elemen kontainer hasil pelacakan dan kontainer pesan error
             const resultContainer = document.getElementById('resultContainer');
             const notFoundContainer = document.getElementById('notFoundContainer');
 
-            // Jika pesanan tidak ditemukan di database lokal browser
             if (!order) {
-                // Sembunyikan panel rincian hasil pelacakan
                 resultContainer.style.display = 'none';
-                // Tuliskan ID pencarian ke dalam penanda teks pesan error
                 document.getElementById('searchQueryId').textContent = orderId;
-                // Tampilkan panel pesan kesalahan bahwa ID tidak terdaftar
                 notFoundContainer.style.display = 'block';
-                // Hentikan proses fungsi
                 return;
             }
 
-            // Sembunyikan panel pesan kesalahan jika pesanan berhasil ditemukan
             notFoundContainer.style.display = 'none';
             
-            // Menampilkan ID pesanan yang dicari ke teks subjudul rincian
+            // Populate Details
             document.getElementById('resOrderId').textContent = order.id;
             
-            // Mengubah format ISO string tanggal menjadi tanggal lokal Indonesia yang mudah dibaca
             const dateObj = new Date(order.tanggal);
-            const dateStr = dateObj.toLocaleDateString('id-ID', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            }) + ' ' + dateObj.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
-            // Menampilkan string tanggal ke elemen teks tanggal rincian
+            const dateStr = dateObj.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) + ' ' + dateObj.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
             document.getElementById('resTanggal').textContent = dateStr;
             
-            // Mengambil elemen lencana (badge) status pesanan untuk diatur gaya visualnya
+            // Status Badge styling
             const badge = document.getElementById('resStatusBadge');
             badge.textContent = order.status;
             badge.className = 'badge';
-            
-            // Memberikan kelas warna lencana yang berbeda berdasarkan status pengerjaan puding
             if (order.status === 'Diproses') {
                 badge.classList.add('badge-diproses');
             } else if (order.status === 'Siap' || order.status === 'Diantar') {
@@ -420,116 +407,152 @@
                 badge.classList.add('badge-selesai');
             }
 
-            // Mengambil elemen-elemen langkah alur diagram status timeline pengerjaan puding
+            // Timeline calculations
             const stepDiproses = document.getElementById('stepDiproses');
             const stepSiap = document.getElementById('stepSiap');
             const stepSelesai = document.getElementById('stepSelesai');
             const progress = document.getElementById('timelineProgress');
 
-            // Reset seluruh kelas status penanda active/completed pada timeline sebelum dihitung ulang
+            // Reset classes
             [stepDiproses, stepSiap, stepSelesai].forEach(step => {
                 step.classList.remove('active', 'completed');
             });
 
-            // Mendeteksi apakah lebar viewport saat ini bertipe seluler/mobile (lebar layar <= 768 piksel)
             const isMobile = window.innerWidth <= 768;
 
-            // Menyesuaikan status aktif dan persentase pengisian garis alur berdasarkan status pengerjaan puding
             if (order.status === 'Diproses') {
-                // Langkah diproses menjadi aktif berkedip
                 stepDiproses.classList.add('active');
                 if (isMobile) {
-                    // Tampilan Mobile: Garis tumbuh ke bawah (tinggi 0%, lebar tetap 4px)
                     progress.style.height = '0%';
                     progress.style.width = '4px';
                 } else {
-                    // Tampilan Desktop: Garis tumbuh ke kanan (lebar 0%, tinggi tetap 4px)
                     progress.style.width = '0%';
                     progress.style.height = '4px';
                 }
             } else if (order.status === 'Siap' || order.status === 'Diantar') {
-                // Langkah diproses selesai, langkah siap saji aktif berkedip
                 stepDiproses.classList.add('completed');
                 stepSiap.classList.add('active');
                 if (isMobile) {
-                    // Tampilan Mobile: Garis tumbuh vertikal ke tengah (tinggi 50%)
                     progress.style.height = '50%';
                     progress.style.width = '4px';
                 } else {
-                    // Tampilan Desktop: Garis tumbuh horizontal ke tengah (lebar 50%)
                     progress.style.width = '50%';
                     progress.style.height = '4px';
                 }
             } else if (order.status === 'Selesai') {
-                // Seluruh tahapan pengerjaan puding selesai dan tuntas
                 stepDiproses.classList.add('completed');
                 stepSiap.classList.add('completed');
                 stepSelesai.classList.add('completed');
                 if (isMobile) {
-                    // Tampilan Mobile: Garis tumbuh vertikal penuh ke bawah (tinggi 100%)
                     progress.style.height = '100%';
                     progress.style.width = '4px';
                 } else {
-                    // Tampilan Desktop: Garis tumbuh horizontal penuh ke kanan (lebar 100%)
                     progress.style.width = '100%';
                     progress.style.height = '4px';
                 }
             }
 
-            // Memasukkan rincian biodata alamat pengiriman dan nama penerima pesanan
+            // Customer Details
             document.getElementById('resPenerima').textContent = order.pelanggan;
             document.getElementById('resTelepon').textContent = order.telepon;
             document.getElementById('resAlamat').textContent = order.alamat;
             
-            // Jika pembeli meninggalkan catatan khusus saat melakukan checkout
             if (order.catatan) {
-                // Tuliskan catatan tersebut ke layout rincian pesanan
                 document.getElementById('resCatatan').textContent = order.catatan;
-                // Tampilkan baris tabel catatan
                 document.getElementById('rowCatatan').style.display = 'table-row';
             } else {
-                // Sembunyikan baris tabel catatan jika kosong
                 document.getElementById('rowCatatan').style.display = 'none';
             }
 
-            // Mengambil kontainer rincian item puding yang dibeli
+            // Rincian items
             const itemsList = document.getElementById('resItemsList');
             let itemsHtml = '';
-            
-            // Menyusun daftar puding yang dibeli beserta subtotal masing-masing
             order.items.forEach(item => {
                 itemsHtml += `
                     <div style="display: flex; gap: 10px; margin-bottom: 12px; border-bottom: 1px dashed #EEE; padding-bottom: 8px;">
-                        <!-- Thumbnail foto produk dengan fallback otomatis -->
                         <img src="${item.gambar}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://placehold.co/45/E6CCFF/9B59B6?text=Puding'">
                         <div style="flex: 1;">
-                            <!-- Nama dan varian rasa puding -->
                             <p style="font-size: 0.85rem; font-weight: bold; margin: 0; line-height: 1.2;">${item.nama}</p>
                             <p style="font-size: 0.75rem; color: var(--text-light); margin: 2px 0 0;">Varian: ${item.varian || 'Original'}</p>
-                            <!-- Jumlah dikali harga satuan produk -->
                             <p style="font-size: 0.75rem; color: var(--text-light); margin: 3px 0 0;">${item.qty} x ${formatRupiah(item.harga)}</p>
                         </div>
-                        <!-- Subtotal harga per item produk -->
                         <div style="font-weight: bold; font-size: 0.85rem;">
                             ${formatRupiah(item.harga * item.qty)}
                         </div>
                     </div>
                 `;
             });
-            // Menginjeksi susunan baris item ke dalam layout
             itemsList.innerHTML = itemsHtml;
 
-            // Mengisi data nominal pembayaran di panel ringkasan biaya akhir
+            // Summary
             document.getElementById('resMetodePembayaran').textContent = order.metodePembayaran;
             document.getElementById('resSubtotal').textContent = formatRupiah(order.subtotal);
             document.getElementById('resTotal').textContent = formatRupiah(order.total);
 
-            // Membuat draf teks pesan aduan otomatis untuk dikirim ke chat WhatsApp admin stand
+            const statusPembayaran = order.paymentStatus || 'Belum Bayar';
+            const payBadge = document.getElementById('resStatusPembayaran');
+            payBadge.textContent = statusPembayaran;
+            payBadge.className = 'badge';
+            if (statusPembayaran === 'Sudah Bayar') {
+                payBadge.classList.add('badge-selesai');
+            } else if (statusPembayaran === 'Menunggu Verifikasi') {
+                payBadge.classList.add('badge-siap');
+            } else {
+                payBadge.classList.add('badge-diproses');
+            }
+
+            // Payment Instructions on tracking page
+            const instructionsBox = document.getElementById('lacakInstructionsContainer');
+            if (instructionsBox) {
+                if ((order.metodePembayaran === 'Transfer Bank' || order.metodePembayaran === 'QRIS') && statusPembayaran === 'Belum Bayar') {
+                    instructionsBox.style.display = 'block';
+                    
+                    let htmlContent = '';
+                    if (order.metodePembayaran === 'Transfer Bank') {
+                        htmlContent = `
+                            <h4 style="margin: 0 0 8px 0; font-size: 0.95rem; color: var(--purple-dark);"><i class="fas fa-university"></i> Transfer Bank:</h4>
+                            <p style="font-size: 0.8rem; color: var(--text-dark); margin-bottom: 8px; line-height: 1.35;">Silakan transfer sebesar <strong>${formatRupiah(order.total)}</strong> ke rekening BCA berikut:</p>
+                            <div style="font-size: 0.9rem; background: white; padding: 12px; border-radius: 6px; font-weight: bold; margin-bottom: 10px; text-align: center; border: 2px solid var(--purple-dark); display: flex; flex-direction: column; gap: 6px; box-shadow: var(--shadow-solid-sm);">
+                                <div style="font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold;">BCA</div>
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 1.25rem;">
+                                    <span>8891077777</span>
+                                    <button type="button" onclick="copyToClipboard('8891077777', 'Nomor rekening BCA berhasil disalin!')" style="background: var(--lavender); border: 1.5px solid var(--purple-dark); padding: 2px 6px; border-radius: 4px; cursor: pointer; color: var(--purple-dark); font-size: 0.7rem; display: inline-flex; align-items: center; gap: 4px;" title="Salin Rekening">
+                                        <i class="far fa-copy"></i> Salin
+                                    </button>
+                                </div>
+                                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-dark);">a/n Rismayanti</div>
+                            </div>
+                            <p style="font-size: 0.75rem; color: var(--text-light); margin: 0; line-height: 1.35;"><i class="fas fa-info-circle"></i> Setelah transfer, silakan konfirmasi ke admin via WhatsApp di bawah agar status diperbarui oleh karyawan kami.</p>
+                        `;
+                    } else if (order.metodePembayaran === 'QRIS') {
+                        htmlContent = `
+                            <h4 style="margin: 0 0 8px 0; font-size: 0.95rem; color: var(--purple-dark);"><i class="fas fa-qrcode"></i> Scan QRIS Merchant:</h4>
+                            <p style="font-size: 0.8rem; color: var(--text-dark); margin-bottom: 8px; line-height: 1.35;">Silakan scan QRIS di bawah sebesar <strong>${formatRupiah(order.total)}</strong>:</p>
+                            <div style="text-align: center; background: white; padding: 10px; border-radius: 6px; border: 2px solid var(--purple-dark); margin-bottom: 10px; box-shadow: var(--shadow-solid-sm); display: flex; flex-direction: column; align-items: center;">
+                                <img src="images/qris.jpeg" alt="QRIS Code" style="width: 140px; height: auto; margin: 0 auto 8px; display: block; border-radius: 6px; cursor: pointer; border: 1px solid #E2E8F0;" onclick="openQrisZoom('images/qris.jpeg')" title="Klik untuk memperbesar">
+                                <div style="display: flex; gap: 4px; justify-content: center; width: 100%;">
+                                    <a href="images/qris.jpeg" download="QRIS_WarungPudding.jpeg" class="btn btn-secondary btn-sm" style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; border: 1.5px solid var(--purple-dark); font-weight: 700;">
+                                        <i class="fas fa-download"></i> Unduh
+                                    </a>
+                                    <button type="button" onclick="openQrisZoom('images/qris.jpeg')" class="btn btn-outline btn-sm" style="font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;">
+                                        <i class="fas fa-search-plus"></i> Perbesar
+                                    </button>
+                                </div>
+                            </div>
+                            <p style="font-size: 0.75rem; color: var(--text-light); margin: 0; line-height: 1.35;"><i class="fas fa-info-circle"></i> Setelah membayar, klik WhatsApp di bawah untuk mengonfirmasi pembayaran Anda.</p>
+                        `;
+                    }
+                    instructionsBox.innerHTML = htmlContent;
+                } else {
+                    instructionsBox.style.display = 'none';
+                }
+            }
+
+            // WhatsApp Contact button text and href
             const waMsg = `Halo WarungPudding, saya ingin menanyakan status pesanan saya dengan ID: *${order.id}* atas nama *${order.pelanggan}*. Status saat ini: *${order.status}*.`;
-            // Mengubah pesan aduan ke format URL aman dan memasangnya ke tombol hubungi WhatsApp
             document.getElementById('resWaContactBtn').href = `https://wa.me/6283180630769?text=${encodeURIComponent(waMsg)}`;
 
-            // Tampilkan panel hasil pelacakan ke halaman secara visual
+            // Render result container
             resultContainer.style.display = 'block';
         }
     </script>

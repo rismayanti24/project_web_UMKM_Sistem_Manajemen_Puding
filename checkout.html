@@ -45,6 +45,29 @@
 
     <!-- Main Content -->
     <main class="container mt-4 mb-4">
+        <!-- Progress Stepper -->
+        <div class="checkout-stepper">
+            <div class="stepper-step active">
+                <span class="stepper-num">1</span>
+                <span class="stepper-text">Data Pemesan</span>
+            </div>
+            <div class="stepper-line"></div>
+            <div class="stepper-step">
+                <span class="stepper-num">2</span>
+                <span class="stepper-text">Pengiriman</span>
+            </div>
+            <div class="stepper-line"></div>
+            <div class="stepper-step">
+                <span class="stepper-num">3</span>
+                <span class="stepper-text">Pembayaran</span>
+            </div>
+            <div class="stepper-line"></div>
+            <div class="stepper-step">
+                <span class="stepper-num">4</span>
+                <span class="stepper-text">Konfirmasi</span>
+            </div>
+        </div>
+
         <form id="checkoutForm" class="cart-layout">
             <!-- Delivery Form -->
             <div class="card">
@@ -180,10 +203,11 @@
             <div class="footer-grid">
                 <div class="footer-brand">
                     <h3><i class="fas fa-ice-cream"></i> WarungPudding</h3>
-                    <p style="color: var(--text-light); margin-bottom: 15px;">Puding sehat bentuk lucu kekinian di Tanjungpinang.</p>
+                    <p style="color: #9A90B0; margin-bottom: 15px;">Puding sehat bentuk lucu kekinian di Tanjungpinang. Dibuat dengan cinta & bahan alami berkualitas.</p>
                     <div class="d-flex gap-2">
-                        <a href="https://instagram.com/warung.pudingenz01" target="_blank" style="background: var(--lavender); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--purple-accent);"><i class="fab fa-instagram"></i></a>
-                        <a href="https://wa.me/6283180630769" target="_blank" style="background: var(--lavender); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--purple-accent);"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://instagram.com/warung.pudingenz01" target="_blank" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/6283180630769" target="_blank" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
                 <div class="footer-links">
@@ -193,14 +217,13 @@
                         <li><a href="produk.html">Katalog Produk</a></li>
                         <li><a href="keranjang.html">Keranjang</a></li>
                         <li><a href="lacak.html">Lacak Pesanan</a></li>
-                        <li><a href="login.html">Login Staff</a></li>
                     </ul>
                 </div>
                 <div class="footer-contact">
                     <h4>Kontak Kami</h4>
-                    <p><i class="fas fa-map-marker-alt" style="color: var(--purple-accent);"></i> Bazar GANET, TPI</p>
-                    <p><i class="fab fa-whatsapp" style="color: var(--purple-accent);"></i> +62 831-8063-0769</p>
-                    <p><i class="fab fa-instagram" style="color: var(--purple-accent);"></i> @warung.pudingenz01</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Bazar GANET, TPI</p>
+                    <p><i class="fab fa-whatsapp"></i> +62 831-8063-0769</p>
+                    <p><i class="fab fa-instagram"></i> @warung.pudingenz01</p>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -211,6 +234,7 @@
 
     <!-- Firebase SDK Compat -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="js/firebase-config.js"></script>
     <script src="js/firebase-sync.js"></script>
@@ -220,96 +244,68 @@
     <script src="js/validation.js"></script>
     
     <script>
-        // Menunggu seluruh elemen halaman selesai dimuat secara penuh (DOM ready)
         document.addEventListener('DOMContentLoaded', () => {
-            // Mengambil daftar item belanja terkini yang ada di keranjang
             const cart = getCart();
             
-            // Jika keranjang belanja kosong (tidak ada produk)
             if (cart.length === 0) {
-                // Alihkan pengguna kembali ke halaman keranjang untuk memilih produk
                 window.location.href = 'keranjang.html';
-                // Hentikan eksekusi script selanjutnya
                 return;
             }
 
-            // Inisialisasi biaya pengiriman default (0 rupiah untuk pengambilan di stand bazar)
-            let currentShipping = 0;
+            let currentShipping = 0; // Default: Ambil di Bazar = free
 
-            // Mengambil semua elemen input radio untuk metode pengambilan/pengiriman
+            // Delivery method toggle
             const deliveryRadios = document.querySelectorAll('input[name="delivery"]');
-            // Mengambil elemen form input alamat pengiriman
             const alamatSection = document.getElementById('alamatSection');
-            // Mengambil elemen tampilan teks biaya pengiriman di ringkasan
             const shippingDisplay = document.getElementById('summaryShipping');
             
-            // Memberikan event listener untuk setiap opsi metode pengambilan/pengiriman
             deliveryRadios.forEach(radio => {
                 radio.addEventListener('change', (e) => {
-                    // Reset warna bingkai (border) semua kartu pilihan pengiriman menjadi transparan
+                    // Style delivery cards
                     document.querySelectorAll('input[name="delivery"]').forEach(r => {
                         r.closest('.card').style.borderColor = 'transparent';
                     });
-                    // Jika opsi ini yang dipilih/dicentang
                     if(e.target.checked) {
-                        // Ubah warna bingkai kartu pilihan tersebut menjadi ungu lavender agar terlihat aktif
                         e.target.closest('.card').style.borderColor = 'var(--lavender)';
                     }
 
-                    // Jika pengguna memilih metode kirim lewat kurir
                     if (e.target.value === 'Kirim via Kurir') {
-                        // Tampilkan form pengisian alamat lengkap
                         alamatSection.style.display = 'block';
-                        // Atur biaya pengiriman flat sebesar Rp 5.000
                         currentShipping = 5000;
                     } else {
-                        // Sembunyikan form pengisian alamat (karena ambil sendiri di bazar)
                         alamatSection.style.display = 'none';
-                        // Atur biaya pengiriman menjadi gratis (0)
                         currentShipping = 0;
                     }
-                    // Hitung dan perbarui ulang total pembayaran secara langsung di halaman
                     updateTotal();
                 });
             });
 
-            // Mengambil semua opsi input radio untuk metode pembayaran
+            // Payment radio button styling
             const paymentRadios = document.querySelectorAll('input[name="payment"]');
-            // Memberikan event listener ketika metode pembayaran dipilih
             paymentRadios.forEach(radio => {
                 radio.addEventListener('change', (e) => {
-                    // Reset warna bingkai semua kartu pilihan pembayaran menjadi transparan
                     document.querySelectorAll('input[name="payment"]').forEach(r => {
                         r.closest('.card').style.borderColor = 'transparent';
                     });
-                    // Jika opsi pembayaran ini dicentang
                     if(e.target.checked) {
-                        // Ubah warna bingkai kartu pilihan tersebut menjadi lavender agar terlihat aktif
                         e.target.closest('.card').style.borderColor = 'var(--lavender)';
                     }
                 });
             });
 
-            // Mengambil elemen kontainer ringkasan item produk pesanan
+            // Render Summary
             const checkoutItems = document.getElementById('checkoutItems');
-            // Variabel penampung susunan elemen HTML item produk
             let itemsHtml = '';
             
-            // Looping setiap item produk yang dibeli untuk dirender ke ringkasan pesanan
             cart.forEach(item => {
                 itemsHtml += `
                     <div style="display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px dashed #EEE; padding-bottom: 10px;">
-                        <!-- Foto produk dengan gambar cadangan jika gagal dimuat -->
                         <img src="${item.gambar}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://placehold.co/50/E6CCFF/9B59B6?text=Puding'">
                         <div style="flex: 1;">
-                            <!-- Nama produk puding -->
                             <p style="font-size: 0.9rem; font-weight: bold; margin: 0; line-height: 1.2;">${item.nama}</p>
-                            <!-- Varian rasa tambahan -->
                             <p style="font-size: 0.8rem; color: var(--text-light); margin: 2px 0 0;">Varian: ${item.varian || 'Original'}</p>
-                            <!-- Jumlah kuantitas dikali harga satuan produk -->
                             <p style="font-size: 0.8rem; color: var(--text-light); margin: 5px 0 0;">${item.qty} x ${formatRupiah(item.harga)}</p>
                         </div>
-                        <!-- Subtotal harga untuk item produk tersebut -->
                         <div style="font-weight: bold; font-size: 0.9rem;">
                             ${formatRupiah(item.harga * item.qty)}
                         </div>
@@ -317,53 +313,38 @@
                 `;
             });
             
-            // Menyisipkan daftar produk belanja ke dalam kontainer HTML
             checkoutItems.innerHTML = itemsHtml;
             
-            // Mengambil total harga belanjaan murni (sebelum ditambah ongkir)
             const subtotal = getCartTotal();
 
-            // Fungsi untuk menghitung dan memperbarui tampilan total harga di layar
             function updateTotal() {
-                // Menjumlahkan subtotal belanja dengan biaya kirim aktif
                 const total = subtotal + currentShipping;
-                // Memperbarui teks nominal subtotal ke rupiah
                 document.getElementById('checkoutSubtotal').textContent = formatRupiah(subtotal);
-                // Memperbarui teks nominal ongkos kirim (menampilkan 'Gratis' jika 0 rupiah)
                 document.getElementById('checkoutShipping').textContent = currentShipping > 0 ? formatRupiah(currentShipping) : 'Gratis';
-                // Memperbarui teks nominal total pembayaran akhir
                 document.getElementById('checkoutTotal').textContent = formatRupiah(total);
             }
 
-            // Memanggil fungsi kalkulasi harga pertama kali
             updateTotal();
 
-            // Menangani aksi pengiriman formulir pesanan (Submit Form Checkout)
+            // Handle Submit
             document.getElementById('checkoutForm').addEventListener('submit', (e) => {
-                // Mencegah halaman reload saat form dikirim
                 e.preventDefault();
                 
-                // Mendapatkan nilai metode pengambilan dan elemen input alamat
                 const deliveryMethod = document.querySelector('input[name="delivery"]:checked').value;
                 const alamatEl = document.getElementById('alamat');
                 
-                // Jika metode pengiriman menggunakan kurir, validasi agar alamat tidak boleh kosong/terlalu pendek
+                // Validate alamat if kurir
                 if (deliveryMethod === 'Kirim via Kurir' && (!alamatEl.value || alamatEl.value.trim().length < 10)) {
-                    // Tampilkan pesan melayang peringatan error
                     showToast('Mohon isi alamat lengkap untuk pengiriman via kurir!', 'error');
-                    // Fokuskan kursor ke input alamat pengiriman
                     alamatEl.focus();
                     return;
                 }
 
-                // Membuat ID Pesanan acak unik berseri (contoh format: WP-382947)
+                // Collect Data
                 const orderId = 'WP-' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-                // Mengambil nilai metode pembayaran yang dipilih oleh pembeli
                 const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-                // Menghitung nominal akhir total bayar
                 const total = subtotal + currentShipping;
                 
-                // Menyusun satu kesatuan objek data pesanan lengkap
                 const orderData = {
                     id: orderId,
                     tanggal: new Date().toISOString(),
@@ -377,65 +358,74 @@
                     subtotal: subtotal,
                     ongkir: currentShipping,
                     total: total,
-                    status: 'Diproses'
+                    status: 'Diproses',
+                    paymentStatus: 'Belum Bayar'
                 };
 
-                // Proses pembaruan stok produk di database lokal dan Firebase (stok dikurangi kuantitas dibeli)
+                // Reduce Stock in local storage & Firebase
                 const products = getProducts();
                 cart.forEach(item => {
                     const product = products.find(p => p.id === item.id);
                     if (product) {
-                        // Mengurangi stok secara aman agar tidak bernilai negatif
                         product.stok = Math.max(0, product.stok - item.qty);
                     }
                 });
-                // Simpan kembali daftar produk yang stoknya telah diperbarui ke LocalStorage browser
                 localStorage.setItem('wp_products', JSON.stringify(products));
-                // Sinkronisasikan data produk terbaru ke database cloud Firebase
                 db.ref('products').set(products);
 
-                // Mengambil daftar transaksi pesanan lama dari LocalStorage
+                // Save to localStorage & Firebase
                 const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
-                // Menambahkan objek pesanan baru ke dalam array pesanan
                 orders.push(orderData);
-                // Simpan kembali array transaksi pesanan ke LocalStorage browser
                 localStorage.setItem('wp_orders', JSON.stringify(orders));
-                // Sinkronisasikan transaksi pesanan baru tersebut ke database cloud Firebase berdasarkan ID Pesanan
                 db.ref('orders/' + orderId).set(orderData);
                 
-                // Menyusun panduan tata cara pembayaran di modal sukses berdasarkan metode yang dipilih
+                // Render Payment Instructions
                 const instructionsContainer = document.getElementById('paymentInstructions');
                 let instructionsHtml = '';
-                
                 if (paymentMethod === 'Transfer Bank') {
                     instructionsHtml = `
-                        <h4 style="margin-bottom: 10px; color: var(--purple-dark);"><i class="fas fa-university"></i> Rincian Transfer Bank:</h4>
-                        <p style="margin-bottom: 8px;">Silakan transfer sebesar <strong>${formatRupiah(total)}</strong> ke rekening berikut:</p>
-                        <p style="font-size: 1.1rem; background: white; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; text-align: center; border: 1px solid #E2E8F0;">
-                            BCA: 1234567890 <br> a/n Warung Pudding TPI
-                        </p>
-                        <p style="color: var(--text-light); font-size: 0.8rem;">*Harap kirimkan foto bukti transfer saat melakukan konfirmasi WhatsApp.</p>
+                        <h4 style="margin-bottom: 12px; color: var(--purple-dark);"><i class="fas fa-university"></i> Rincian Transfer Bank:</h4>
+                        <p style="margin-bottom: 10px;">Silakan transfer sebesar <strong>${formatRupiah(total)}</strong> ke rekening berikut:</p>
+                        <div style="font-size: 1.15rem; background: white; padding: 15px; border-radius: var(--radius-md); font-weight: bold; margin-bottom: 15px; text-align: center; border: var(--border-width) solid var(--purple-dark); box-shadow: var(--shadow-solid-sm); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; position: relative; overflow: hidden;">
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: -4px;">Bank Central Asia (BCA)</div>
+                            <div style="font-size: 1.5rem; letter-spacing: 1px; color: var(--purple-dark); display: flex; align-items: center; gap: 10px;">
+                                <span>8891077777</span>
+                                <button type="button" onclick="copyToClipboard('8891077777', 'Nomor rekening BCA berhasil disalin!')" style="background: var(--lavender); border: 2px solid var(--purple-dark); padding: 4px 10px; border-radius: 6px; cursor: pointer; color: var(--purple-dark); font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px; box-shadow: var(--shadow-solid-sm);" title="Salin Rekening">
+                                    <i class="far fa-copy"></i> Salin
+                                </button>
+                            </div>
+                            <div style="font-size: 0.95rem; font-weight: 600; color: var(--text-dark);">a/n Rismayanti</div>
+                        </div>
+                        <p style="color: var(--text-light); font-size: 0.85rem; line-height: 1.45; margin-bottom: 0;"><i class="fas fa-info-circle"></i> Setelah transfer, klik tombol WhatsApp di bawah untuk konfirmasi. Karyawan kami akan memeriksa pembayaran Anda di mutasi rekening.</p>
                     `;
                 } else if (paymentMethod === 'QRIS') {
                     instructionsHtml = `
-                        <h4 style="margin-bottom: 10px; color: var(--purple-dark);"><i class="fas fa-qrcode"></i> QRIS Merchant:</h4>
-                        <p style="margin-bottom: 8px;">Silakan scan QRIS di bawah sebesar <strong>${formatRupiah(total)}</strong>:</p>
-                        <div style="text-align: center; background: white; padding: 15px; border-radius: 8px; border: 1px solid #E2E8F0; margin-bottom: 10px;">
-                            <img src="https://placehold.co/180x180/FFF/000?text=QRIS+WARUNGPUDDING" alt="QRIS Code" style="width: 150px; height: 150px; margin: 0 auto; display: block;">
+                        <h4 style="margin-bottom: 12px; color: var(--purple-dark);"><i class="fas fa-qrcode"></i> Scan QRIS Merchant:</h4>
+                        <p style="margin-bottom: 10px;">Silakan scan kode QRIS di bawah sebesar <strong>${formatRupiah(total)}</strong>:</p>
+                        <div style="text-align: center; background: white; padding: 15px; border-radius: var(--radius-md); border: var(--border-width) solid var(--purple-dark); margin-bottom: 15px; box-shadow: var(--shadow-solid-sm); position: relative; display: flex; flex-direction: column; align-items: center;">
+                            <img src="images/qris.jpeg" alt="QRIS Code" style="width: 200px; height: auto; display: block; border-radius: 8px; cursor: pointer; border: 1px solid #E2E8F0; transition: transform 0.2s;" onclick="openQrisZoom('images/qris.jpeg')" title="Klik untuk memperbesar">
+                            <div style="margin-top: 12px; display: flex; gap: 8px; justify-content: center; width: 100%;">
+                                <a href="images/qris.jpeg" download="QRIS_WarungPudding.jpeg" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 6px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; border: 2px solid var(--purple-dark); font-weight: 700;">
+                                    <i class="fas fa-download"></i> Unduh QRIS
+                                </a>
+                                <button type="button" onclick="openQrisZoom('images/qris.jpeg')" class="btn btn-outline btn-sm" style="font-size: 0.75rem; padding: 6px 12px; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; font-weight: 700;">
+                                    <i class="fas fa-search-plus"></i> Perbesar
+                                </button>
+                            </div>
                         </div>
-                        <p style="color: var(--text-light); font-size: 0.8rem;">*Simpan bukti pembayaran dan lampirkan di chat WhatsApp.</p>
+                        <p style="color: var(--text-light); font-size: 0.85rem; line-height: 1.45; margin-bottom: 0;"><i class="fas fa-info-circle"></i> Setelah membayar, klik tombol WhatsApp di bawah untuk konfirmasi. Karyawan kami akan memverifikasi pembayaran Anda.</p>
                     `;
                 } else {
                     instructionsHtml = `
-                        <h4 style="margin-bottom: 10px; color: var(--purple-dark);"><i class="fas fa-hand-holding-usd"></i> Bayar di Tempat (COD):</h4>
-                        <p style="margin-bottom: 8px;">Silakan siapkan uang pas sebesar <strong>${formatRupiah(total)}</strong> saat ${deliveryMethod === 'Ambil di Bazar' ? 'mengambil pesanan di stand' : 'kurir mengantarkan pesanan'}.</p>
-                        <p>Konfirmasi via WhatsApp untuk mempercepat proses.</p>
+                        <h4 style="margin-bottom: 12px; color: var(--purple-dark);"><i class="fas fa-hand-holding-usd"></i> Bayar di Tempat (COD):</h4>
+                        <p style="margin-bottom: 10px;">Silakan siapkan uang pas sebesar <strong>${formatRupiah(total)}</strong> saat ${deliveryMethod === 'Ambil di Bazar' ? 'mengambil pesanan di stand' : 'kurir mengantarkan pesanan'}.</p>
+                        <p style="color: var(--text-light); font-size: 0.85rem; line-height: 1.45; margin-bottom: 0;"><i class="fas fa-info-circle"></i> Pesanan Anda akan diproses. Klik tombol WhatsApp di bawah untuk konfirmasi kedatangan/pengiriman dengan cepat.</p>
                     `;
                 }
-                // Memasukkan petunjuk pembayaran ke penampung HTML
                 instructionsContainer.innerHTML = instructionsHtml;
 
-                // Membangun format teks pesan otomatis yang akan dikirim pembeli ke WhatsApp resmi UMKM
+
+                // Build WhatsApp message format
                 const text = `Halo WarungPudding, saya ingin mengonfirmasi pesanan saya:
 
 *No. Pesanan:* ${orderId}
@@ -452,18 +442,15 @@ ${currentShipping > 0 ? `*Ongkir:* Rp 5.000` : `*Ongkir:* Gratis (Ambil Sendiri)
 
 Mohon segera diproses ya. Terima kasih!`;
 
-                // Melakukan encode teks agar aman untuk dijadikan query string parameter URL WhatsApp
                 const encodedText = encodeURIComponent(text);
                 const whatsappUrl = `https://wa.me/6283180630769?text=${encodedText}`;
-                // Memasang URL WhatsApp ke tombol konfirmasi di modal sukses
                 document.getElementById('whatsappConfirmBtn').href = whatsappUrl;
 
-                // Mengosongkan keranjang belanja lokal karena pembelian telah berhasil diselesaikan
+                // Clear cart
                 clearCart();
                 
-                // Memperbarui teks nomor pesanan pada modal sukses
+                // Show Success
                 document.getElementById('orderNumber').textContent = orderId;
-                // Menampilkan modal sukses dengan menambahkan kelas CSS aktif
                 document.getElementById('successModal').classList.add('active');
             });
         });

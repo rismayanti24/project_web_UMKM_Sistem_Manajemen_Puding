@@ -2,15 +2,15 @@
 
 // Default Products (Seed Data)
 const defaultProducts = [
-    { id: 'p1', nama: 'Puding Coklat Beruang', kategori: 'Coklat', harga: 15000, stok: 20, gambar: 'images/puding dino.jpg', deskripsi: 'Puding rasa coklat lezat dengan bentuk beruang lucu. Cocok untuk pecinta coklat.', tersedia: true },
-    { id: 'p2', nama: 'Puding Strawberry Kelinci', kategori: 'Strawberry', harga: 15000, stok: 15, gambar: 'images/kelinci puding.jpeg', deskripsi: 'Puding strawberry segar bentuk kelinci yang sangat menggemaskan.', tersedia: true },
-    { id: 'p3', nama: 'Puding Matcha Dino', kategori: 'Matcha', harga: 18000, stok: 10, gambar: 'images/puding dino.jpg', deskripsi: 'Puding rasa matcha otentik dengan bentuk dinosaurus lucu.', tersedia: true },
-    { id: 'p4', nama: 'Puding Vanilla Tusuk', kategori: 'Vanilla', harga: 14000, stok: 25, gambar: 'images/puding tusuk.jpg', deskripsi: 'Puding vanilla praktis dengan stik, mudah dinikmati kapan saja.', tersedia: true },
-    { id: 'p5', nama: 'Puding Kaki Kucing', kategori: 'Kelinci', harga: 20000, stok: 5, gambar: 'images/kaki kucing puding.jpg', deskripsi: 'Puding berbentuk kaki kucing yang sangat imut.', tersedia: true },
-    { id: 'p6', nama: 'Puding Kelinci Pink', kategori: 'Kelinci', harga: 20000, stok: 8, gambar: 'images/kelinci puding.jpeg', deskripsi: 'Puding kelinci pink dengan rasa mix berry.', tersedia: true },
-    { id: 'p7', nama: 'Puding Dino Blue', kategori: 'Dinosaurus', harga: 22000, stok: 12, gambar: 'images/dino blue.jpg', deskripsi: 'Puding dinosaurus biru lucu dengan rasa buah blueberry segar.', tersedia: true },
-    { id: 'p8', nama: 'Puding Dino Pink', kategori: 'Dinosaurus', harga: 22000, stok: 15, gambar: 'images/dino pink.jpg', deskripsi: 'Puding dinosaurus pink dengan rasa strawberry manis.', tersedia: true },
-    { id: 'p9', nama: 'Puding Stik Pelangi', kategori: 'Vanilla', harga: 18000, stok: 15, gambar: 'images/puding tusuk.jpg', deskripsi: 'Puding stik warna warni rasa buah-buahan.', tersedia: true }
+    { id: 'p1', nama: 'Puding Coklat Dino', kategori: 'Coklat', harga: 8000, stok: 20, gambar: 'images/Puding Coklat Dino.jpg', deskripsi: 'Puding rasa coklat lezat berbentuk dinosaurus lucu yang menggemaskan.', tersedia: true },
+    { id: 'p2', nama: 'Puding Strawberry Kelinci', kategori: 'Strawberry', harga: 8000, stok: 15, gambar: 'images/kelinci puding.jpeg', deskripsi: 'Puding strawberry segar bentuk kelinci yang sangat menggemaskan.', tersedia: true },
+    { id: 'p3', nama: 'Puding Matcha Dino', kategori: 'Matcha', harga: 8000, stok: 10, gambar: 'images/puding dino.jpg', deskripsi: 'Puding rasa matcha otentik dengan bentuk dinosaurus lucu.', tersedia: true },
+    { id: 'p4', nama: 'Puding Mangga Dino', kategori: 'Dinosaurus', harga: 8000, stok: 25, gambar: 'images/Puding Mangga Dino.jpg', deskripsi: 'Puding rasa mangga segar dengan bentuk dinosaurus lucu.', tersedia: true },
+    { id: 'p5', nama: 'Puding Kaki Kucing', kategori: 'Kelinci', harga: 8000, stok: 5, gambar: 'images/kaki kucing puding.jpg', deskripsi: 'Puding berbentuk kaki kucing yang sangat imut.', tersedia: true },
+    { id: 'p6', nama: 'Puding Permen Karet Kelinci', kategori: 'Kelinci', harga: 8000, stok: 8, gambar: 'images/kelinci puding.jpeg', deskripsi: 'Puding kelinci imut dengan rasa permen karet yang manis.', tersedia: true },
+    { id: 'p7', nama: 'Puding Permen Karet Dino', kategori: 'Dinosaurus', harga: 8000, stok: 12, gambar: 'images/dino blue.jpg', deskripsi: 'Puding dinosaurus lucu dengan rasa permen karet segar.', tersedia: true },
+    { id: 'p8', nama: 'Puding Strawberry Dino', kategori: 'Dinosaurus', harga: 8000, stok: 15, gambar: 'images/dino pink.jpg', deskripsi: 'Puding dinosaurus pink dengan rasa strawberry manis.', tersedia: true },
+    { id: 'p9', nama: 'Puding Stik Pelangi', kategori: 'Vanilla', harga: 5000, stok: 15, gambar: 'images/puding tusuk.jpg', deskripsi: 'Puding stik warna warni rasa buah-buahan.', tersedia: true }
 ];
 
 // Initialize Products in LocalStorage — only seed if not already present

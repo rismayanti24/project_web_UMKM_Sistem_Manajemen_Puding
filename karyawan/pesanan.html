@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,77 +8,19 @@
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/responsive.css">
     <style>
-        .sidebar-link i,
-        .stat-icon i,
-        .status-tab i {
-            color: var(--purple-accent);
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 0.9rem;
-        }
-
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        .detail-value {
-            font-weight: 600;
-            text-align: right;
-            max-width: 60%;
-        }
-
-        .delivery-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .delivery-pickup {
-            background: #F3E8FF;
-            color: #7C3AED;
-        }
-
-        .delivery-kurir {
-            background: #FEF3C7;
-            color: #D97706;
-        }
-
-        .delivery-sent {
-            background: #D1FAE5;
-            color: #059669;
-        }
-
-        .btn-detail {
-            padding: 4px 8px;
-            font-size: 0.75rem;
-            border: 1px solid var(--lavender);
-            background: transparent;
-            color: var(--purple-accent);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-detail:hover {
-            background: var(--lavender);
-        }
+        .sidebar-link i, .stat-icon i, .status-tab i { color: var(--purple-accent); }
+        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { color: var(--text-light); font-weight: 500; }
+        .detail-value { font-weight: 600; text-align: right; max-width: 60%; }
+        .delivery-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+        .delivery-pickup { background: #F3E8FF; color: #7C3AED; }
+        .delivery-kurir { background: #FEF3C7; color: #D97706; }
+        .delivery-sent { background: #D1FAE5; color: #059669; }
+        .btn-detail { padding: 4px 8px; font-size: 0.75rem; border: 1px solid var(--lavender); background: transparent; color: var(--purple-accent); border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+        .btn-detail:hover { background: var(--lavender); }
     </style>
 </head>
-
 <body>
     <!-- Dashboard Layout -->
     <div class="dashboard-layout">
@@ -90,7 +31,7 @@
                 <h3 id="displayUserName">Karyawan</h3>
                 <span class="badge" style="background: var(--lavender); color: var(--purple-accent);">Stand GANET</span>
             </div>
-
+            
             <nav class="sidebar-menu">
                 <a href="pesanan.html" class="sidebar-link active">
                     <i class="fas fa-clipboard-list"></i> Pesanan Masuk
@@ -106,12 +47,11 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <h2 class="mb-4"><i class="fas fa-clipboard-list" style="color: var(--purple-accent);"></i> Kelola Pesanan
-            </h2>
-
+            <h2 class="mb-4"><i class="fas fa-clipboard-list" style="color: var(--purple-accent);"></i> Kelola Pesanan</h2>
+            
             <!-- Stats -->
             <div class="stats-grid mb-4">
-                <div class="dashboard-card stat-card">
+                <div class="dashboard-card stat-card" onclick="filterByStatus('Diproses')">
                     <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
                         <i class="fas fa-cookie-bite"></i>
                     </div>
@@ -120,8 +60,8 @@
                         <p id="statDiproses">0</p>
                     </div>
                 </div>
-
-                <div class="dashboard-card stat-card">
+                
+                <div class="dashboard-card stat-card" onclick="filterByStatus('Siap')">
                     <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
                         <i class="fas fa-box-open"></i>
                     </div>
@@ -130,8 +70,8 @@
                         <p id="statSiap">0</p>
                     </div>
                 </div>
-
-                <div class="dashboard-card stat-card">
+                
+                <div class="dashboard-card stat-card" onclick="filterByStatus('Diantar')">
                     <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
                         <i class="fas fa-motorcycle"></i>
                     </div>
@@ -140,8 +80,8 @@
                         <p id="statDiantar">0</p>
                     </div>
                 </div>
-
-                <div class="dashboard-card stat-card">
+                
+                <div class="dashboard-card stat-card" onclick="filterByStatus('Selesai')">
                     <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
                         <i class="fas fa-calendar-check"></i>
                     </div>
@@ -151,16 +91,16 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="dashboard-card">
                 <div class="status-tabs" id="statusFilters">
                     <button class="status-tab active" data-status="Semua">Semua</button>
                     <button class="status-tab" data-status="Diproses">Diproses</button>
                     <button class="status-tab" data-status="Siap">Siap</button>
                     <button class="status-tab" data-status="Diantar">Diantar</button>
-                    <button class="status-tab" data-status="Selesai">Selesai</button>
+                    <button class="status-tab" data-status="Selesai">Selesai Hari Ini</button>
                 </div>
-
+                
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
@@ -171,6 +111,7 @@
                                 <th>Item</th>
                                 <th>Total</th>
                                 <th>Status</th>
+                                <th>Pembayaran</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -187,10 +128,8 @@
     <div id="detailModal" class="modal">
         <div class="modal-content" style="padding: 30px; max-width: 550px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="margin: 0; color: var(--purple-accent);"><i class="fas fa-receipt"
-                        style="color: var(--purple-accent);"></i> Detail Pesanan</h3>
-                <button onclick="closeModal('detailModal')"
-                    style="background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--text-light);">&times;</button>
+                <h3 style="margin: 0; color: var(--purple-accent);"><i class="fas fa-receipt" style="color: var(--purple-accent);"></i> Detail Pesanan</h3>
+                <button onclick="closeModal('detailModal')" style="background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--text-light);">&times;</button>
             </div>
             <div id="detailContent">
                 <!-- Injected via JS -->
@@ -200,6 +139,7 @@
 
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
     <script src="../js/firebase-config.js"></script>
     <script src="../js/firebase-sync.js"></script>
@@ -208,69 +148,68 @@
     <script src="../js/auth.js"></script>
     <script src="../js/main.js"></script>
     <script>
-        // Menunggu seluruh elemen halaman selesai dimuat (DOM ready)
-        document.addEventListener('DOMContentLoaded', () => {
-            // Melindungi halaman: memeriksa apakah peran pengguna saat ini adalah 'karyawan'
-            const user = checkAuth('karyawan');
-            // Jika tidak terverifikasi atau bukan karyawan, batalkan pemuatan naskah script
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await checkAuth('karyawan');
             if (!user) return;
-
-            // Mendapatkan elemen body tabel tempat menampilkan daftar pesanan masuk
+            
             const ordersTableBody = document.getElementById('ordersTableBody');
-            // Mendapatkan seluruh tombol tab filter status pesanan
             const statusFilters = document.querySelectorAll('.status-tab');
-            // Menyimpan status filter aktif, secara default menampilkan 'Semua' pesanan
             let currentFilter = 'Semua';
 
-            // Fungsi utama untuk memuat data pesanan dan memperbarui tampilan antarmuka
             function renderOrders() {
-                // Mengambil daftar pesanan dari LocalStorage, jika kosong gunakan array kosong []
                 const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
-
-                // Variabel bantu untuk menghitung statistik jumlah pesanan pada masing-masing status
+                
+                // Calculate stats
                 let countDiproses = 0;
                 let countSiap = 0;
                 let countDiantar = 0;
                 let countSelesaiHariIni = 0;
-                // Mendapatkan string tanggal hari ini untuk mencocokkan laporan selesai harian
                 const todayStr = new Date().toDateString();
 
-                // Melakukan iterasi pesanan untuk menghitung kuantitas statistik dashboard
                 orders.forEach(o => {
                     if (o.status === 'Diproses') countDiproses++;
                     else if (o.status === 'Siap') countSiap++;
                     else if (o.status === 'Diantar') countDiantar++;
-
-                    // Menghitung jumlah pesanan yang selesai khusus untuk hari ini saja
+                    
                     if (o.status === 'Selesai') {
                         try {
                             const d = new Date(o.tanggal);
                             if (d.toDateString() === todayStr) {
                                 countSelesaiHariIni++;
                             }
-                        } catch (e) { }
+                        } catch(e) {}
                     }
                 });
 
-                // Menuliskan hasil perhitungan statistik ke elemen counter di dashboard
                 document.getElementById('statDiproses').innerText = countDiproses;
                 document.getElementById('statSiap').innerText = countSiap;
                 document.getElementById('statDiantar').innerText = countDiantar;
                 document.getElementById('statSelesaiHariIni').innerText = countSelesaiHariIni;
 
-                // Melakukan penyaringan pesanan sesuai tab filter yang sedang aktif
                 let filtered = orders;
-                if (currentFilter !== 'Semua') {
+                if (currentFilter === 'Semua') {
+                    // Tampilkan semua pesanan tanpa filter
+                    filtered = orders;
+                } else if (currentFilter === 'Selesai') {
+                    // Tampilkan pesanan selesai hari ini saja
+                    filtered = orders.filter(o => {
+                        if (o.status !== 'Selesai') return false;
+                        try {
+                            const d = new Date(o.tanggal);
+                            return d.toDateString() === todayStr;
+                        } catch(e) { return false; }
+                    });
+                } else {
                     filtered = orders.filter(o => o.status === currentFilter);
                 }
 
-                // Mengurutkan pesanan berdasarkan urutan prioritas pengerjaan status
                 filtered.sort((a, b) => {
                     const orderStatus = { 'Diproses': 1, 'Siap': 2, 'Diantar': 3, 'Selesai': 4 };
-                    return (orderStatus[a.status] || 99) - (orderStatus[b.status] || 99);
+                    const statusDiff = (orderStatus[a.status] || 99) - (orderStatus[b.status] || 99);
+                    if (statusDiff !== 0) return statusDiff;
+                    return new Date(b.tanggal || 0) - new Date(a.tanggal || 0);
                 });
 
-                // Jika tidak ada pesanan setelah difilter
                 if (filtered.length === 0) {
                     ordersTableBody.innerHTML = `
                         <tr>
@@ -283,29 +222,25 @@
                     return;
                 }
 
-                // Render baris tabel pesanan secara dinamis
                 ordersTableBody.innerHTML = filtered.map(order => {
                     let itemNames = '-';
                     try {
-                        // Menggabungkan daftar nama item puding yang dipesan dipisahkan baris baru (<br>)
                         if (order.items && Array.isArray(order.items)) {
                             itemNames = order.items.map(i => `${i.qty || 1}x ${i.nama || 'Produk'}`).join('<br>');
                         }
-                    } catch (e) { itemNames = '-'; }
-
-                    // Memformat nominal total harga ke Rupiah
+                    } catch(e) { itemNames = '-'; }
+                    
                     const totalDisplay = order.total ? formatRupiah(order.total) : 'Rp 0';
-
-                    // Memformat tampilan tanggal pesanan
+                    
                     let tanggalDisplay = '-';
                     if (order.tanggal) {
                         try {
                             const d = new Date(order.tanggal);
                             tanggalDisplay = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
-                        } catch (e) { tanggalDisplay = '-'; }
+                        } catch(e) { tanggalDisplay = '-'; }
                     }
 
-                    // Menentukan lencana visual (badge) untuk metode pengiriman (Kurir / Ambil Sendiri)
+                    // Delivery method display
                     const isKurir = order.metodePengambilan === 'Kirim via Kurir';
                     let deliveryBadge = '';
                     if (isKurir) {
@@ -319,35 +254,66 @@
                     } else {
                         deliveryBadge = `<span class="delivery-badge delivery-pickup"><i class="fas fa-store"></i> Ambil</span>`;
                     }
-
+                    
                     let badgeClass = '';
                     let actions = '';
-
-                    // Mengatur warna badge status dan tombol aksi yang relevan berdasarkan status aktif pesanan
+                    
+                    const paymentMethod = order.metodePembayaran || '-';
+                    const paymentStatus = order.paymentStatus || 'Belum Bayar';
+                    const needsPayment = (paymentMethod === 'Transfer Bank' || paymentMethod === 'QRIS') && paymentStatus !== 'Sudah Bayar';
+                    
                     if (order.status === 'Diproses') {
                         badgeClass = 'badge-diproses';
-                        // Aksi: Jika pesanan siap diproduksi, ubah ke status 'Siap'
-                        actions = `<button onclick="updateStatus('${order.id}', 'Siap')" class="btn btn-primary btn-sm" style="padding: 4px 10px; font-size: 0.75rem;">Siap</button>`;
+                        if (needsPayment) {
+                            actions = `<button onclick="showToast('Konfirmasi pembayaran lunas terlebih dahulu!', 'error')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #E2E8F0; color: #94A3B8; border: 1.5px solid #94A3B8; border-radius: 8px; cursor: not-allowed; box-shadow: none;" title="Harus Lunas"><i class="fas fa-lock"></i> Siap</button>`;
+                        } else {
+                            actions = `<button onclick="updateStatus('${order.id}', 'Siap')" class="btn btn-primary btn-sm" style="padding: 4px 10px; font-size: 0.75rem;">Siap</button>`;
+                        }
                     } else if (order.status === 'Siap') {
                         badgeClass = 'badge-siap';
                         if (isKurir) {
-                            // Aksi Kurir: Jika siap kirim, jalankan aksi 'Antar'
-                            actions = `<button onclick="updateStatus('${order.id}', 'Diantar')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #F59E0B; color: white; border: none; border-radius: 8px;"><i class="fas fa-motorcycle"></i> Antar</button>`;
+                            if (needsPayment) {
+                                actions = `<button onclick="showToast('Konfirmasi pembayaran lunas terlebih dahulu!', 'error')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #E2E8F0; color: #94A3B8; border: 1.5px solid #94A3B8; border-radius: 8px; cursor: not-allowed; box-shadow: none;" title="Harus Lunas"><i class="fas fa-lock"></i> Antar</button>`;
+                            } else {
+                                actions = `<button onclick="updateStatus('${order.id}', 'Diantar')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #F59E0B; color: white; border: none; border-radius: 8px;"><i class="fas fa-motorcycle"></i> Antar</button>`;
+                            }
                         } else {
-                            // Aksi Ambil: Jika pembeli mengambil di tempat, jalankan aksi 'Selesai'
-                            actions = `<button onclick="updateStatus('${order.id}', 'Selesai')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #10B981; color: white; border: none; border-radius: 8px;"><i class="fas fa-check"></i> Selesai</button>`;
+                            if (needsPayment) {
+                                actions = `<button onclick="showToast('Konfirmasi pembayaran lunas terlebih dahulu!', 'error')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #E2E8F0; color: #94A3B8; border: 1.5px solid #94A3B8; border-radius: 8px; cursor: not-allowed; box-shadow: none;" title="Harus Lunas"><i class="fas fa-lock"></i> Selesai</button>`;
+                            } else {
+                                actions = `<button onclick="updateStatus('${order.id}', 'Selesai')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #10B981; color: white; border: none; border-radius: 8px;"><i class="fas fa-check"></i> Selesai</button>`;
+                            }
                         }
                     } else if (order.status === 'Diantar') {
                         badgeClass = 'badge-siap';
-                        // Aksi Kurir: Kurir mengonfirmasi pesanan telah 'Sampai' ke tangan pembeli
-                        actions = `<button onclick="updateStatus('${order.id}', 'Selesai')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #10B981; color: white; border: none; border-radius: 8px;"><i class="fas fa-check"></i> Sampai</button>`;
+                        if (needsPayment) {
+                            actions = `<button onclick="showToast('Konfirmasi pembayaran lunas terlebih dahulu!', 'error')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #E2E8F0; color: #94A3B8; border: 1.5px solid #94A3B8; border-radius: 8px; cursor: not-allowed; box-shadow: none;" title="Harus Lunas"><i class="fas fa-lock"></i> Sampai</button>`;
+                        } else {
+                            actions = `<button onclick="updateStatus('${order.id}', 'Selesai')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #10B981; color: white; border: none; border-radius: 8px;"><i class="fas fa-check"></i> Sampai</button>`;
+                        }
                     } else {
                         badgeClass = 'badge-selesai';
-                        // Aksi Selesai: Tampilkan tanda centang hijau tanpa tombol aksi
                         actions = `<span style="color: #10B981; font-size: 0.8rem;"><i class="fas fa-check-circle"></i></span>`;
                     }
+                    
+                    let payBadgeClass = 'badge-diproses';
+                    if (paymentStatus === 'Sudah Bayar') payBadgeClass = 'badge-selesai';
+                    
+                    let payActionBtn = '';
+                    if (paymentStatus === 'Sudah Bayar') {
+                        payActionBtn = `<button onclick="togglePaymentStatus('${order.id}', 'Belum Bayar')" style="display: block; width: 100%; margin-top: 6px; padding: 4px 8px; font-size: 0.65rem; font-weight: 800; background: #EF4444; color: white; border: 1.5px solid var(--purple-dark); border-radius: 6px; cursor: pointer; box-shadow: 1px 1px 0 var(--purple-dark); font-family: inherit; transition: all 0.1s;"><i class="fas fa-times"></i> Batal Lunas</button>`;
+                    } else {
+                        payActionBtn = `<button onclick="togglePaymentStatus('${order.id}', 'Sudah Bayar')" style="display: block; width: 100%; margin-top: 6px; padding: 4px 8px; font-size: 0.65rem; font-weight: 800; background: #10B981; color: white; border: 1.5px solid var(--purple-dark); border-radius: 6px; cursor: pointer; box-shadow: 1px 1px 0 var(--purple-dark); font-family: inherit; transition: all 0.1s;"><i class="fas fa-check"></i> Set Lunas</button>`;
+                    }
 
-                    // Mengembalikan kerangka HTML baris tabel untuk pesanan terkait
+                    let payCell = `
+                        <div style="font-size: 0.8rem; text-align: center; width: 100%;">
+                            <strong>${paymentMethod}</strong><br>
+                            <span class="badge ${payBadgeClass}" style="font-size: 0.65rem; margin-top: 3px; display: inline-block;">${paymentStatus}</span>
+                            ${payActionBtn}
+                        </div>
+                    `;
+
                     return `
                         <tr>
                             <td>
@@ -357,7 +323,6 @@
                             <td>
                                 ${order.pelanggan || '-'}<br>
                                 <div style="display: flex; gap: 4px; margin-top: 4px;">
-                                    <!-- Tombol aksi pembantu untuk detail pesanan dan cetak struk thermal -->
                                     <button class="btn-detail" onclick="showDetail('${order.id}')"><i class="fas fa-eye fa-fw"></i> Detail</button>
                                     <button class="btn-detail" onclick="printReceipt('${order.id}')" style="border-color: var(--purple-accent); color: var(--purple-accent);"><i class="fas fa-print fa-fw"></i> Cetak</button>
                                 </div>
@@ -366,30 +331,29 @@
                             <td style="font-size: 0.85rem;">${itemNames}</td>
                             <td style="font-weight: bold; font-size: 0.85rem;">${totalDisplay}</td>
                             <td><span class="badge ${badgeClass}" style="font-size: 0.7rem;">${order.status || '-'}</span></td>
+                            <td>${payCell}</td>
                             <td>${actions}</td>
                         </tr>
                     `;
                 }).join('');
             }
 
-            // Fungsi global untuk menampilkan Modal Detail rincian pesanan secara mendalam
-            window.showDetail = function (orderId) {
+            // Show Detail Modal
+            window.showDetail = function(orderId) {
                 const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
                 const order = orders.find(o => o.id === orderId);
                 if (!order) return;
 
                 const isKurir = order.metodePengambilan === 'Kirim via Kurir';
-
-                // Menyusun string tanggal lengkap beserta jam pemesanan
+                
                 let tanggalFull = '-';
                 if (order.tanggal) {
                     try {
                         const d = new Date(order.tanggal);
-                        tanggalFull = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + ', ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                    } catch (e) { }
+                        tanggalFull = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + ', ' + d.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                    } catch(e) {}
                 }
 
-                // Membangun daftar item puding belanjaan pembeli
                 let itemsHtml = '';
                 if (order.items && Array.isArray(order.items)) {
                     itemsHtml = order.items.map(i => `
@@ -400,7 +364,6 @@
                     `).join('');
                 }
 
-                // HTML konten detail rincian transaksi lengkap dan template chat WhatsApp otomatis
                 const content = `
                     <div class="detail-row">
                         <span class="detail-label"><i class="fas fa-hashtag" style="color: var(--purple-accent);"></i> No. Pesanan</span>
@@ -409,6 +372,16 @@
                     <div class="detail-row">
                         <span class="detail-label"><i class="fas fa-calendar" style="color: var(--purple-accent);"></i> Tanggal</span>
                         <span class="detail-value">${tanggalFull}</span>
+                    </div>
+                    <div class="detail-row" style="align-items: center;">
+                        <span class="detail-label"><i class="fas fa-wallet" style="color: var(--purple-accent);"></i> Pembayaran</span>
+                        <span class="detail-value" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end;">
+                            <span>${order.metodePembayaran || '-'} (${order.paymentStatus || 'Belum Bayar'})</span>
+                            ${order.paymentStatus === 'Sudah Bayar' 
+                                ? `<button onclick="togglePaymentStatus('${order.id}', 'Belum Bayar'); closeModal('detailModal');" class="btn" style="background: #EF4444; color: white; border: none; font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-weight: bold; width: auto; line-height: 1;"><i class="fas fa-times"></i> Set Belum Bayar</button>`
+                                : `<button onclick="togglePaymentStatus('${order.id}', 'Sudah Bayar'); closeModal('detailModal');" class="btn" style="background: #10B981; color: white; border: none; font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-weight: bold; width: auto; line-height: 1;"><i class="fas fa-check"></i> Set Lunas</button>`
+                            }
+                        </span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label"><i class="fas fa-user" style="color: var(--purple-accent);"></i> Pelanggan</span>
@@ -462,26 +435,22 @@
                     <div style="margin-top: 15px; padding: 12px; background: #F5EFFF; border-radius: 10px; border: 1px solid rgba(155, 89, 182, 0.15);">
                         <h4 style="margin: 0 0 10px; font-size: 0.85rem; color: var(--purple-accent);"><i class="fab fa-whatsapp"></i> Pintasan Template WhatsApp</h4>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <!-- Tautan instan untuk mengabari pembeli via WhatsApp template bahwa pesanan sedang dimasak -->
                             <a href="https://wa.me/${(order.telepon).replace(/^0/, '62')}?text=${encodeURIComponent('Halo kak ' + (order.pelanggan || '') + ', pesanan ' + order.id + ' sedang kami siapkan ya. Terima kasih! 🍮🌸')}" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 8px 12px; border-radius: 8px; justify-content: flex-start; text-align: left; background: var(--white); color: var(--purple-dark); border: 1px solid var(--lavender);">
                                 <i class="fab fa-whatsapp fa-lg" style="color: #25D366;"></i> 🧑‍🍳 Konfirmasi / Siapkan Pesanan
                             </a>
                             
                             ${!isKurir ? `
-                            <!-- Template chat jika pesanan tipe Ambil Sendiri telah matang/siap diambil -->
                             <a href="https://wa.me/${(order.telepon).replace(/^0/, '62')}?text=${encodeURIComponent('Halo kak ' + (order.pelanggan || '') + ', pesanan ' + order.id + ' sudah siap diambil di booth bazar WarungPudding ya. Ditunggu kedatangannya! 🍮✨')}" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 8px 12px; border-radius: 8px; justify-content: flex-start; text-align: left; background: var(--white); color: var(--purple-dark); border: 1px solid var(--lavender);">
                                 <i class="fab fa-whatsapp fa-lg" style="color: #25D366;"></i> 🏪 Siap Diambil di Bazar
                             </a>
                             ` : ''}
 
                             ${isKurir ? `
-                            <!-- Template chat jika pesanan tipe pengiriman sedang di jalan dibawa kurir -->
                             <a href="https://wa.me/${(order.telepon).replace(/^0/, '62')}?text=${encodeURIComponent('Halo kak ' + (order.pelanggan || '') + ', pesanan ' + order.id + ' sedang dalam perjalanan ke alamat Anda oleh kurir kami. Mohon ditunggu ya! 🏍️💨')}" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 8px 12px; border-radius: 8px; justify-content: flex-start; text-align: left; background: var(--white); color: var(--purple-dark); border: 1px solid var(--lavender);">
                                 <i class="fab fa-whatsapp fa-lg" style="color: #25D366;"></i> 🏍️ Sedang Diantar Kurir
                             </a>
                             ` : ''}
 
-                            <!-- Template chat ucapan terima kasih karena transaksi telah tuntas sukses -->
                             <a href="https://wa.me/${(order.telepon).replace(/^0/, '62')}?text=${encodeURIComponent('Halo kak ' + (order.pelanggan || '') + ', pesanan ' + order.id + ' telah selesai diterima. Terima kasih banyak sudah berbelanja di WarungPudding! Semoga kakak suka ya! ❤️ Pudding Karakter WarungPudding')}" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 8px 12px; border-radius: 8px; justify-content: flex-start; text-align: left; background: var(--white); color: var(--purple-dark); border: 1px solid var(--lavender);">
                                 <i class="fab fa-whatsapp fa-lg" style="color: #25D366;"></i> ✅ Pesanan Selesai / Terima Kasih
                             </a>
@@ -493,34 +462,30 @@
                     </button>
                 `;
 
-                // Menyuntikkan string HTML konten ke dalam elemen body modal detail
                 document.getElementById('detailContent').innerHTML = content;
-                // Membuka modal detail
                 openModal('detailModal');
             };
 
-            // Fungsi global untuk mencetak struk belanja thermal (format struk printer kasir)
-            window.printReceipt = function (orderId) {
+            // Print Receipt Handler
+            window.printReceipt = function(orderId) {
                 const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
                 const order = orders.find(o => o.id === orderId);
                 if (!order) return;
 
                 const isKurir = order.metodePengambilan === 'Kirim via Kurir';
-
+                
                 let tanggalFull = '-';
                 if (order.tanggal) {
                     try {
                         const d = new Date(order.tanggal);
-                        tanggalFull = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + ', ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                    } catch (e) { }
+                        tanggalFull = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + ', ' + d.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                    } catch(e) {}
                 }
 
-                // Menyiapkan teks nominal yang diformat Rupiah untuk struk
                 const subtotalFormatted = order.subtotal ? formatRupiah(order.subtotal) : formatRupiah(order.total);
                 const totalFormatted = formatRupiah(order.total);
                 const ongkirFormatted = order.ongkir ? formatRupiah(order.ongkir) : 'Gratis';
 
-                // Menyusun baris-baris daftar belanjaan di struk kasir
                 const itemsHtml = (order.items || []).map(i => `
                     <tr>
                         <td>
@@ -532,14 +497,12 @@
                     </tr>
                 `).join('');
 
-                // Membuka jendela cetak kosong baru
                 const printWindow = window.open('', '_blank', 'width=350,height=600');
                 if (!printWindow) {
                     showToast('Gagal mencetak! Izinkan popup di browser Anda.', 'error');
                     return;
                 }
 
-                // Menulis struktur HTML struk belanja lengkap dengan CSS kasir monospace sederhana
                 printWindow.document.write(`
                     ${'<!'}DOCTYPE html>
                     <html lang="id">
@@ -661,19 +624,16 @@
                     ${'</'}html>
                 `);
 
-                // Menginstruksikan jendela struk baru untuk membuka dialog print bawaan browser
                 const scriptEl = printWindow.document.createElement('script');
                 scriptEl.textContent = 'window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 500); };';
                 printWindow.document.body.appendChild(scriptEl);
                 printWindow.document.close();
             };
 
-            // Fungsi global untuk memperbarui status pengerjaan pesanan di Firebase
-            window.updateStatus = function (orderId, newStatus) {
-                // Menyimpan status baru langsung ke path spesifik order terkait di Firebase cloud
+            // Status Update Handler
+            window.updateStatus = function(orderId, newStatus) {
                 db.ref('orders/' + orderId + '/status').set(newStatus)
                     .then(() => {
-                        // Menyiapkan pesan toast sukses sesuai dengan status baru yang dipilih
                         const msgs = {
                             'Siap': 'Pesanan siap diambil/diantar!',
                             'Diantar': 'Pesanan sedang diantar oleh kurir!',
@@ -687,30 +647,50 @@
                     });
             };
 
-            // Menangani klik pada tab filter untuk mengubah status pesanan yang ditampilkan
+            // Filter Tabs
             statusFilters.forEach(tab => {
                 tab.addEventListener('click', () => {
-                    // Menghapus kelas 'active' dari semua tab
                     statusFilters.forEach(t => t.classList.remove('active'));
-                    // Menambahkan kelas 'active' ke tab yang baru diklik
                     tab.classList.add('active');
-                    // Menyimpan kriteria filter status yang baru
                     currentFilter = tab.getAttribute('data-status');
-                    // Me-render ulang daftar pesanan sesuai filter terpilih
                     renderOrders();
                 });
             });
 
-            // Panggilan render pesanan pertama kali saat halaman dibuka
+            // Toggle Payment Status Handler (Set Lunas / Belum Bayar)
+            window.togglePaymentStatus = function(orderId, newPaymentStatus) {
+                db.ref('orders/' + orderId).update({ paymentStatus: newPaymentStatus })
+                    .then(() => {
+                        const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
+                        const ordIndex = orders.findIndex(o => o.id === orderId);
+                        if (ordIndex !== -1) {
+                            orders[ordIndex].paymentStatus = newPaymentStatus;
+                            localStorage.setItem('wp_orders', JSON.stringify(orders));
+                        }
+                        showToast(`Status pembayaran pesanan ${orderId} berhasil diubah ke: ${newPaymentStatus}!`);
+                        renderOrders();
+                    })
+                    .catch(err => {
+                        console.error("Gagal mengubah status pembayaran:", err);
+                        showToast('Gagal mengubah status pembayaran!', 'error');
+                    });
+            };
+
+            // Filter by Status helper for clickable stat cards
+            window.filterByStatus = function(status) {
+                const tab = Array.from(statusFilters).find(t => t.getAttribute('data-status') === status);
+                if (tab) {
+                    tab.click();
+                }
+            };
+
             renderOrders();
 
-            // Mendengarkan pembaruan real-time daftar pesanan baru dari Firebase sync event
+            // === AUTO-REFRESH: Pesanan otomatis muncul secara real-time via Firebase ===
             window.addEventListener('wp_orders_sync', () => {
-                // Refresh list tabel secara instan tanpa reload halaman
                 renderOrders();
             });
         });
     </script>
 </body>
-
 </html>

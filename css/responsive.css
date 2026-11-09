@@ -1,6 +1,8 @@
-/* css/responsive.css */
+/* ============================================
+   RESPONSIVE — WarungPudding Premium v2.0
+   ============================================ */
 
-/* Tablet and smaller (max-width: 1024px) */
+/* ─── Tablet (max-width: 1024px) ─── */
 @media (max-width: 1024px) {
     .container {
         padding: 0 20px;
@@ -21,7 +23,7 @@
     }
     
     .hero-content h1 {
-        font-size: 3rem;
+        font-size: 2.8rem;
     }
     
     .product-grid {
@@ -39,7 +41,7 @@
     .sidebar {
         width: 100%;
         border-right: none;
-        border-bottom: 1px solid #F1F5F9;
+        border-bottom: var(--border-width) solid var(--purple-dark);
         padding: 20px;
         flex-direction: row;
         flex-wrap: wrap;
@@ -67,7 +69,7 @@
     .sidebar-link {
         flex: 1;
         justify-content: center;
-        border-radius: 30px;
+        border-radius: var(--radius-pill);
     }
     
     .cart-layout {
@@ -79,18 +81,27 @@
         margin-top: 30px;
     }
 
-    /* Kontak section tablet */
     .contact-layout {
         grid-template-columns: 1fr;
-        gap: 50px;
+        gap: 30px;
         text-align: center;
     }
 
-    .contact-info-panel h2 {
+    .contact-header {
+        text-align: center;
+    }
+
+    .contact-header h2 {
         font-size: 2.3rem;
     }
 
+    .contact-header .contact-desc {
+        margin: 10px auto 0 !important;
+    }
+
     .contact-info-list {
+        grid-column: 1;
+        grid-row: 1;
         align-items: center;
     }
 
@@ -101,16 +112,31 @@
     }
 
     .contact-buttons-row {
+        grid-column: 1;
+        grid-row: 2;
         justify-content: center;
+    }
+
+    .contact-map-panel {
+        grid-column: 1;
+        grid-row: 3;
     }
 
     .contact-map-wrapper {
         max-width: 600px;
         margin: 0 auto;
     }
+
+    .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .checkout-stepper .stepper-text {
+        display: none;
+    }
 }
 
-/* Mobile (max-width: 768px) */
+/* ─── Mobile (max-width: 768px) ─── */
 @media (max-width: 768px) {
     .nav-menu {
         display: none;
@@ -119,13 +145,15 @@
         top: 100%;
         left: 0;
         width: 100%;
-        background-color: var(--glass-bg);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        box-shadow: var(--shadow-md);
+        background-color: var(--white);
+        box-shadow: var(--shadow-solid);
+        border-left: var(--border-width) solid var(--purple-dark);
+        border-right: var(--border-width) solid var(--purple-dark);
+        border-bottom: var(--border-width) solid var(--purple-dark);
+        border-top: var(--border-width) solid var(--purple-dark);
         padding: 20px 24px 30px;
         gap: 20px;
-        border-top: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 0 0 var(--radius-lg) var(--radius-lg);
     }
     
     .nav-menu.active {
@@ -154,7 +182,7 @@
     }
     
     .hero-content h1 {
-        font-size: 2.5rem;
+        font-size: clamp(1.8rem, 7vw, 2.5rem);
     }
     
     .hero-content p {
@@ -169,6 +197,11 @@
         margin-top: 20px;
         width: 100%;
         max-width: 500px;
+    }
+
+    .hero-trust {
+        justify-content: center;
+        flex-wrap: wrap;
     }
     
     .features-grid {
@@ -196,12 +229,13 @@
     }
     
     .table-responsive {
-        border: 1px solid #F1F5F9;
+        border: var(--border-width) solid var(--purple-dark);
     }
     
     .page-header {
         padding: 50px 20px;
         margin-bottom: 40px;
+        border-radius: 0 0 30px 30px;
     }
     
     .page-header h1 {
@@ -222,7 +256,6 @@
         justify-content: center;
     }
 
-    /* Kontak section mobile */
     .contact-info-panel h2 {
         font-size: 2rem;
     }
@@ -238,7 +271,6 @@
         justify-content: center;
     }
 
-    /* Product card responsive */
     .product-card .product-info {
         padding: 16px;
     }
@@ -256,13 +288,20 @@
         flex-direction: column;
     }
 
-    /* Login responsive */
     .login-container {
         padding: 0 15px;
     }
+
+    .checkout-stepper {
+        gap: 0;
+    }
+    
+    .stepper-line {
+        width: 24px;
+    }
 }
 
-/* Small Mobile (max-width: 480px) */
+/* ─── Small Mobile (max-width: 480px) ─── */
 @media (max-width: 480px) {
     .product-grid {
         grid-template-columns: 1fr;
@@ -304,7 +343,6 @@
         padding: 20px;
     }
 
-    /* Smaller nav on very small screens */
     .nav-logo {
         font-size: 1.2rem;
     }
@@ -313,12 +351,10 @@
         font-size: 1.4rem;
     }
 
-    /* Kontak buttons stack */
     .contact-buttons-row {
         flex-direction: column;
     }
 
-    /* Filters scroll */
     .filters {
         justify-content: flex-start;
         overflow-x: auto;
@@ -332,26 +368,32 @@
         flex-shrink: 0;
     }
 
-    /* Feature cards more compact */
     .feature-card {
         padding: 25px 20px;
     }
 
     .feature-icon {
-        width: 60px;
-        height: 60px;
-        font-size: 2rem;
+        width: 56px;
+        height: 56px;
+        font-size: 1.6rem;
     }
 
-    /* Steps compact */
     .step-card {
-        padding: 35px 20px 25px;
+        padding: 28px 20px 22px;
     }
 
     .step-icon-wrapper {
-        width: 60px;
-        height: 60px;
-        font-size: 1.8rem;
+        width: 56px;
+        height: 56px;
+        font-size: 1.6rem;
         margin-bottom: 15px;
+    }
+
+    .checkout-stepper .stepper-text {
+        display: none;
+    }
+
+    .stepper-line {
+        width: 16px;
     }
 }
