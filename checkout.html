@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - WarungPudding</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-ice-cream"></i> WarungPudding
+            </a>
+            
+            <button class="nav-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Beranda</a></li>
+                <li><a href="produk.html" class="nav-link">Produk</a></li>
+                <li><a href="lacak.html" class="nav-link">Lacak Pesanan</a></li>
+                <li><a href="index.html#kontak" class="nav-link">Kontak</a></li>
+                <li class="nav-cart-wrapper">
+                    <a href="keranjang.html" class="nav-link nav-cart-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" style="display: none;">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="page-header">
+        <h1>Checkout Pesanan</h1>
+        <p style="color: var(--text-dark); position: relative; z-index: 1;">Lengkapi data pengiriman untuk memproses puding karaktermu</p>
+        <div class="floating-badge badge-bazar" style="bottom: 15px; right: 20px;">Bazar GANET</div>
+        <div class="floating-badge badge-halal" style="top: 15px; left: 20px; bottom: auto;"><i class="fas fa-heart" style="color: var(--pink-soft);"></i> Halal & Higienis</div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mt-4 mb-4">
+        <form id="checkoutForm" class="cart-layout">
+            <!-- Delivery Form -->
+            <div class="card">
+                <h3 style="margin-bottom: 20px; color: var(--purple-accent);"><i class="fas fa-user"></i> Data Pemesan</h3>
+                
+                <div class="form-group">
+                    <label class="form-label">Nama Lengkap *</label>
+                    <input type="text" id="nama" class="form-control" required placeholder="Masukkan nama lengkap">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Nomor WhatsApp *</label>
+                    <input type="tel" id="telepon" class="form-control" required placeholder="Contoh: 08123456789">
+                </div>
+
+                <h3 style="margin: 30px 0 20px; color: var(--purple-accent);"><i class="fas fa-truck"></i> Metode Pengambilan</h3>
+                
+                <div class="d-flex flex-column gap-2">
+                    <label class="card" style="padding: 15px; cursor: pointer; display: flex; align-items: center; gap: 15px; border: 2px solid var(--lavender);" id="pickupLabel">
+                        <input type="radio" name="delivery" value="Ambil di Bazar" checked style="width: 20px; height: 20px;">
+                        <div>
+                            <h4 style="margin: 0;"><i class="fas fa-store" style="color: var(--purple-accent);"></i> Ambil Sendiri di Bazar</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-light); margin: 0;">Ambil langsung di Stand Bazar GANET, Tanjungpinang</p>
+                        </div>
+                    </label>
+                    
+                    <label class="card" style="padding: 15px; cursor: pointer; display: flex; align-items: center; gap: 15px; border: 2px solid transparent;" id="kurirLabel">
+                        <input type="radio" name="delivery" value="Kirim via Kurir" style="width: 20px; height: 20px;">
+                        <div>
+                            <h4 style="margin: 0;"><i class="fas fa-motorcycle" style="color: var(--purple-accent);"></i> Kirim via Kurir</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-light); margin: 0;">Diantar ke alamat kamu (ongkir Rp 5.000)</p>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Alamat section (shown only for Kurir) -->
+                <div id="alamatSection" style="display: none; margin-top: 20px;">
+                    <div class="form-group">
+                        <label class="form-label">Alamat Lengkap *</label>
+                        <textarea id="alamat" class="form-control" placeholder="Masukkan alamat pengiriman detail (Jalan, No Rumah, RT/RW, Patokan)"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label class="form-label">Catatan Pesanan (Opsional)</label>
+                    <textarea id="catatan" class="form-control" style="min-height: 60px;" placeholder="Contoh: Jangan terlalu manis, atau minta sendok extra"></textarea>
+                </div>
+
+                <h3 style="margin: 30px 0 20px; color: var(--purple-accent);"><i class="fas fa-wallet"></i> Metode Pembayaran</h3>
+                
+                <div class="d-flex flex-column gap-2">
+                    <label class="card" style="padding: 15px; cursor: pointer; display: flex; align-items: center; gap: 15px; border: 2px solid var(--lavender);">
+                        <input type="radio" name="payment" value="Transfer Bank" checked style="width: 20px; height: 20px;">
+                        <div>
+                            <h4 style="margin: 0;">Transfer Bank</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-light); margin: 0;">BCA / Mandiri / BNI</p>
+                        </div>
+                    </label>
+                    
+                    <label class="card" style="padding: 15px; cursor: pointer; display: flex; align-items: center; gap: 15px; border: 2px solid transparent;">
+                        <input type="radio" name="payment" value="QRIS" style="width: 20px; height: 20px;">
+                        <div>
+                            <h4 style="margin: 0;">QRIS</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-light); margin: 0;">Scan dengan e-wallet (Ovo, Gopay, Dana)</p>
+                        </div>
+                    </label>
+                    
+                    <label class="card" style="padding: 15px; cursor: pointer; display: flex; align-items: center; gap: 15px; border: 2px solid transparent;">
+                        <input type="radio" name="payment" value="Bayar di Tempat" style="width: 20px; height: 20px;">
+                        <div>
+                            <h4 style="margin: 0;">Bayar di Tempat (COD)</h4>
+                            <p style="font-size: 0.85rem; color: var(--text-light); margin: 0;">Bayar langsung saat ambil / pesanan tiba</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Order Summary (Read-only) -->
+            <div class="cart-summary">
+                <h3 style="margin-bottom: 20px; color: var(--purple-accent);"><i class="fas fa-shopping-bag"></i> Ringkasan Pesanan</h3>
+                
+                <div id="checkoutItems" style="margin-bottom: 20px; max-height: 300px; overflow-y: auto;">
+                    <!-- Injected via JS -->
+                </div>
+                
+                <div style="border-top: 1px solid #EEE; padding-top: 15px;">
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="checkoutSubtotal">Rp 0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Ongkos Kirim</span>
+                        <span id="checkoutShipping">Gratis</span>
+                    </div>
+                    
+                    <div class="summary-total summary-row">
+                        <span>Total Pembayaran</span>
+                        <span id="checkoutTotal" style="color: var(--pink-soft);">Rp 0</span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary w-100 mt-4" style="width: 100%;">
+                    Konfirmasi Pesanan <i class="fas fa-check" style="margin-left: 8px;"></i>
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content text-center" style="padding: 40px 20px; max-width: 600px;">
+            <i class="fas fa-check-circle fa-5x" style="color: var(--purple-accent); margin-bottom: 20px;"></i>
+            <h2 style="color: var(--purple-accent); margin-bottom: 10px;">Pesanan Berhasil!</h2>
+            <p style="margin-bottom: 15px;">Terima kasih telah memesan di WarungPudding.<br>Pesanan Anda akan segera kami proses.</p>
+            <p style="font-weight: bold; margin-bottom: 15px;">No. Pesanan: <span id="orderNumber" style="color: var(--pink-soft);"></span></p>
+            
+            <div id="paymentInstructions" class="card mb-3" style="text-align: left; padding: 20px; font-size: 0.9rem; margin-bottom: 25px; background-color: var(--bg-light); border: 1px dashed var(--lavender);">
+                <!-- Injected via JS -->
+            </div>
+
+            <div class="d-flex flex-column gap-2">
+                <a id="whatsappConfirmBtn" href="#" target="_blank" class="btn btn-primary w-100" style="background-color: var(--purple-accent); color: white; border: none; width: 100%;">
+                    <i class="fab fa-whatsapp"></i> Konfirmasi & Kirim Detail ke WhatsApp
+                </a>
+                <a href="index.html" class="btn btn-outline w-100" style="width: 100%;">Kembali ke Beranda</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3><i class="fas fa-ice-cream"></i> WarungPudding</h3>
+                    <p style="color: var(--text-light); margin-bottom: 15px;">Puding sehat bentuk lucu kekinian di Tanjungpinang.</p>
+                    <div class="d-flex gap-2">
+                        <a href="https://instagram.com/warung.pudingenz01" target="_blank" style="background: var(--lavender); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--purple-accent);"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/6283180630769" target="_blank" style="background: var(--lavender); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--purple-accent);"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Navigasi</h4>
+                    <ul>
+                        <li><a href="index.html">Beranda</a></li>
+                        <li><a href="produk.html">Katalog Produk</a></li>
+                        <li><a href="keranjang.html">Keranjang</a></li>
+                        <li><a href="lacak.html">Lacak Pesanan</a></li>
+                        <li><a href="login.html">Login Staff</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Kontak Kami</h4>
+                    <p><i class="fas fa-map-marker-alt" style="color: var(--purple-accent);"></i> Bazar GANET, TPI</p>
+                    <p><i class="fab fa-whatsapp" style="color: var(--purple-accent);"></i> +62 831-8063-0769</p>
+                    <p><i class="fab fa-instagram" style="color: var(--purple-accent);"></i> @warung.pudingenz01</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 WarungPudding UMKM Tanjungpinang. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-sync.js"></script>
+
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/validation.js"></script>
+    
+    <script>
+        // Menunggu seluruh elemen halaman selesai dimuat secara penuh (DOM ready)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mengambil daftar item belanja terkini yang ada di keranjang
+            const cart = getCart();
+            
+            // Jika keranjang belanja kosong (tidak ada produk)
+            if (cart.length === 0) {
+                // Alihkan pengguna kembali ke halaman keranjang untuk memilih produk
+                window.location.href = 'keranjang.html';
+                // Hentikan eksekusi script selanjutnya
+                return;
+            }
+
+            // Inisialisasi biaya pengiriman default (0 rupiah untuk pengambilan di stand bazar)
+            let currentShipping = 0;
+
+            // Mengambil semua elemen input radio untuk metode pengambilan/pengiriman
+            const deliveryRadios = document.querySelectorAll('input[name="delivery"]');
+            // Mengambil elemen form input alamat pengiriman
+            const alamatSection = document.getElementById('alamatSection');
+            // Mengambil elemen tampilan teks biaya pengiriman di ringkasan
+            const shippingDisplay = document.getElementById('summaryShipping');
+            
+            // Memberikan event listener untuk setiap opsi metode pengambilan/pengiriman
+            deliveryRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    // Reset warna bingkai (border) semua kartu pilihan pengiriman menjadi transparan
+                    document.querySelectorAll('input[name="delivery"]').forEach(r => {
+                        r.closest('.card').style.borderColor = 'transparent';
+                    });
+                    // Jika opsi ini yang dipilih/dicentang
+                    if(e.target.checked) {
+                        // Ubah warna bingkai kartu pilihan tersebut menjadi ungu lavender agar terlihat aktif
+                        e.target.closest('.card').style.borderColor = 'var(--lavender)';
+                    }
+
+                    // Jika pengguna memilih metode kirim lewat kurir
+                    if (e.target.value === 'Kirim via Kurir') {
+                        // Tampilkan form pengisian alamat lengkap
+                        alamatSection.style.display = 'block';
+                        // Atur biaya pengiriman flat sebesar Rp 5.000
+                        currentShipping = 5000;
+                    } else {
+                        // Sembunyikan form pengisian alamat (karena ambil sendiri di bazar)
+                        alamatSection.style.display = 'none';
+                        // Atur biaya pengiriman menjadi gratis (0)
+                        currentShipping = 0;
+                    }
+                    // Hitung dan perbarui ulang total pembayaran secara langsung di halaman
+                    updateTotal();
+                });
+            });
+
+            // Mengambil semua opsi input radio untuk metode pembayaran
+            const paymentRadios = document.querySelectorAll('input[name="payment"]');
+            // Memberikan event listener ketika metode pembayaran dipilih
+            paymentRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    // Reset warna bingkai semua kartu pilihan pembayaran menjadi transparan
+                    document.querySelectorAll('input[name="payment"]').forEach(r => {
+                        r.closest('.card').style.borderColor = 'transparent';
+                    });
+                    // Jika opsi pembayaran ini dicentang
+                    if(e.target.checked) {
+                        // Ubah warna bingkai kartu pilihan tersebut menjadi lavender agar terlihat aktif
+                        e.target.closest('.card').style.borderColor = 'var(--lavender)';
+                    }
+                });
+            });
+
+            // Mengambil elemen kontainer ringkasan item produk pesanan
+            const checkoutItems = document.getElementById('checkoutItems');
+            // Variabel penampung susunan elemen HTML item produk
+            let itemsHtml = '';
+            
+            // Looping setiap item produk yang dibeli untuk dirender ke ringkasan pesanan
+            cart.forEach(item => {
+                itemsHtml += `
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; border-bottom: 1px dashed #EEE; padding-bottom: 10px;">
+                        <!-- Foto produk dengan gambar cadangan jika gagal dimuat -->
+                        <img src="${item.gambar}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://placehold.co/50/E6CCFF/9B59B6?text=Puding'">
+                        <div style="flex: 1;">
+                            <!-- Nama produk puding -->
+                            <p style="font-size: 0.9rem; font-weight: bold; margin: 0; line-height: 1.2;">${item.nama}</p>
+                            <!-- Varian rasa tambahan -->
+                            <p style="font-size: 0.8rem; color: var(--text-light); margin: 2px 0 0;">Varian: ${item.varian || 'Original'}</p>
+                            <!-- Jumlah kuantitas dikali harga satuan produk -->
+                            <p style="font-size: 0.8rem; color: var(--text-light); margin: 5px 0 0;">${item.qty} x ${formatRupiah(item.harga)}</p>
+                        </div>
+                        <!-- Subtotal harga untuk item produk tersebut -->
+                        <div style="font-weight: bold; font-size: 0.9rem;">
+                            ${formatRupiah(item.harga * item.qty)}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Menyisipkan daftar produk belanja ke dalam kontainer HTML
+            checkoutItems.innerHTML = itemsHtml;
+            
+            // Mengambil total harga belanjaan murni (sebelum ditambah ongkir)
+            const subtotal = getCartTotal();
+
+            // Fungsi untuk menghitung dan memperbarui tampilan total harga di layar
+            function updateTotal() {
+                // Menjumlahkan subtotal belanja dengan biaya kirim aktif
+                const total = subtotal + currentShipping;
+                // Memperbarui teks nominal subtotal ke rupiah
+                document.getElementById('checkoutSubtotal').textContent = formatRupiah(subtotal);
+                // Memperbarui teks nominal ongkos kirim (menampilkan 'Gratis' jika 0 rupiah)
+                document.getElementById('checkoutShipping').textContent = currentShipping > 0 ? formatRupiah(currentShipping) : 'Gratis';
+                // Memperbarui teks nominal total pembayaran akhir
+                document.getElementById('checkoutTotal').textContent = formatRupiah(total);
+            }
+
+            // Memanggil fungsi kalkulasi harga pertama kali
+            updateTotal();
+
+            // Menangani aksi pengiriman formulir pesanan (Submit Form Checkout)
+            document.getElementById('checkoutForm').addEventListener('submit', (e) => {
+                // Mencegah halaman reload saat form dikirim
+                e.preventDefault();
+                
+                // Mendapatkan nilai metode pengambilan dan elemen input alamat
+                const deliveryMethod = document.querySelector('input[name="delivery"]:checked').value;
+                const alamatEl = document.getElementById('alamat');
+                
+                // Jika metode pengiriman menggunakan kurir, validasi agar alamat tidak boleh kosong/terlalu pendek
+                if (deliveryMethod === 'Kirim via Kurir' && (!alamatEl.value || alamatEl.value.trim().length < 10)) {
+                    // Tampilkan pesan melayang peringatan error
+                    showToast('Mohon isi alamat lengkap untuk pengiriman via kurir!', 'error');
+                    // Fokuskan kursor ke input alamat pengiriman
+                    alamatEl.focus();
+                    return;
+                }
+
+                // Membuat ID Pesanan acak unik berseri (contoh format: WP-382947)
+                const orderId = 'WP-' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+                // Mengambil nilai metode pembayaran yang dipilih oleh pembeli
+                const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+                // Menghitung nominal akhir total bayar
+                const total = subtotal + currentShipping;
+                
+                // Menyusun satu kesatuan objek data pesanan lengkap
+                const orderData = {
+                    id: orderId,
+                    tanggal: new Date().toISOString(),
+                    pelanggan: document.getElementById('nama').value,
+                    telepon: document.getElementById('telepon').value,
+                    alamat: deliveryMethod === 'Kirim via Kurir' ? alamatEl.value : 'Ambil di Bazar GANET',
+                    catatan: document.getElementById('catatan').value,
+                    metodePengambilan: deliveryMethod,
+                    metodePembayaran: paymentMethod,
+                    items: cart,
+                    subtotal: subtotal,
+                    ongkir: currentShipping,
+                    total: total,
+                    status: 'Diproses'
+                };
+
+                // Proses pembaruan stok produk di database lokal dan Firebase (stok dikurangi kuantitas dibeli)
+                const products = getProducts();
+                cart.forEach(item => {
+                    const product = products.find(p => p.id === item.id);
+                    if (product) {
+                        // Mengurangi stok secara aman agar tidak bernilai negatif
+                        product.stok = Math.max(0, product.stok - item.qty);
+                    }
+                });
+                // Simpan kembali daftar produk yang stoknya telah diperbarui ke LocalStorage browser
+                localStorage.setItem('wp_products', JSON.stringify(products));
+                // Sinkronisasikan data produk terbaru ke database cloud Firebase
+                db.ref('products').set(products);
+
+                // Mengambil daftar transaksi pesanan lama dari LocalStorage
+                const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
+                // Menambahkan objek pesanan baru ke dalam array pesanan
+                orders.push(orderData);
+                // Simpan kembali array transaksi pesanan ke LocalStorage browser
+                localStorage.setItem('wp_orders', JSON.stringify(orders));
+                // Sinkronisasikan transaksi pesanan baru tersebut ke database cloud Firebase berdasarkan ID Pesanan
+                db.ref('orders/' + orderId).set(orderData);
+                
+                // Menyusun panduan tata cara pembayaran di modal sukses berdasarkan metode yang dipilih
+                const instructionsContainer = document.getElementById('paymentInstructions');
+                let instructionsHtml = '';
+                
+                if (paymentMethod === 'Transfer Bank') {
+                    instructionsHtml = `
+                        <h4 style="margin-bottom: 10px; color: var(--purple-dark);"><i class="fas fa-university"></i> Rincian Transfer Bank:</h4>
+                        <p style="margin-bottom: 8px;">Silakan transfer sebesar <strong>${formatRupiah(total)}</strong> ke rekening berikut:</p>
+                        <p style="font-size: 1.1rem; background: white; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 10px; text-align: center; border: 1px solid #E2E8F0;">
+                            BCA: 1234567890 <br> a/n Warung Pudding TPI
+                        </p>
+                        <p style="color: var(--text-light); font-size: 0.8rem;">*Harap kirimkan foto bukti transfer saat melakukan konfirmasi WhatsApp.</p>
+                    `;
+                } else if (paymentMethod === 'QRIS') {
+                    instructionsHtml = `
+                        <h4 style="margin-bottom: 10px; color: var(--purple-dark);"><i class="fas fa-qrcode"></i> QRIS Merchant:</h4>
+                        <p style="margin-bottom: 8px;">Silakan scan QRIS di bawah sebesar <strong>${formatRupiah(total)}</strong>:</p>
+                        <div style="text-align: center; background: white; padding: 15px; border-radius: 8px; border: 1px solid #E2E8F0; margin-bottom: 10px;">
+                            <img src="https://placehold.co/180x180/FFF/000?text=QRIS+WARUNGPUDDING" alt="QRIS Code" style="width: 150px; height: 150px; margin: 0 auto; display: block;">
+                        </div>
+                        <p style="color: var(--text-light); font-size: 0.8rem;">*Simpan bukti pembayaran dan lampirkan di chat WhatsApp.</p>
+                    `;
+                } else {
+                    instructionsHtml = `
+                        <h4 style="margin-bottom: 10px; color: var(--purple-dark);"><i class="fas fa-hand-holding-usd"></i> Bayar di Tempat (COD):</h4>
+                        <p style="margin-bottom: 8px;">Silakan siapkan uang pas sebesar <strong>${formatRupiah(total)}</strong> saat ${deliveryMethod === 'Ambil di Bazar' ? 'mengambil pesanan di stand' : 'kurir mengantarkan pesanan'}.</p>
+                        <p>Konfirmasi via WhatsApp untuk mempercepat proses.</p>
+                    `;
+                }
+                // Memasukkan petunjuk pembayaran ke penampung HTML
+                instructionsContainer.innerHTML = instructionsHtml;
+
+                // Membangun format teks pesan otomatis yang akan dikirim pembeli ke WhatsApp resmi UMKM
+                const text = `Halo WarungPudding, saya ingin mengonfirmasi pesanan saya:
+
+*No. Pesanan:* ${orderId}
+*Nama:* ${orderData.pelanggan}
+*Telepon:* ${orderData.telepon}
+*Pengambilan:* ${deliveryMethod}
+${deliveryMethod === 'Kirim via Kurir' ? `*Alamat:* ${orderData.alamat}\n` : ''}*Metode Pembayaran:* ${paymentMethod}
+${orderData.catatan ? `*Catatan:* ${orderData.catatan}\n` : ''}
+*Rincian Pesanan:*
+${cart.map(i => `- ${i.nama} (${i.varian || 'Original'}) x${i.qty} = ${formatRupiah(i.harga * i.qty)}`).join('\n')}
+
+${currentShipping > 0 ? `*Ongkir:* Rp 5.000` : `*Ongkir:* Gratis (Ambil Sendiri)`}
+*Total Pembayaran:* ${formatRupiah(total)}
+
+Mohon segera diproses ya. Terima kasih!`;
+
+                // Melakukan encode teks agar aman untuk dijadikan query string parameter URL WhatsApp
+                const encodedText = encodeURIComponent(text);
+                const whatsappUrl = `https://wa.me/6283180630769?text=${encodedText}`;
+                // Memasang URL WhatsApp ke tombol konfirmasi di modal sukses
+                document.getElementById('whatsappConfirmBtn').href = whatsappUrl;
+
+                // Mengosongkan keranjang belanja lokal karena pembelian telah berhasil diselesaikan
+                clearCart();
+                
+                // Memperbarui teks nomor pesanan pada modal sukses
+                document.getElementById('orderNumber').textContent = orderId;
+                // Menampilkan modal sukses dengan menambahkan kelas CSS aktif
+                document.getElementById('successModal').classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

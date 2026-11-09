@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Produk - WarungPudding</title>
+    <meta name="description" content="Lihat detail produk puding karakter lucu dari WarungPudding.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-ice-cream"></i> WarungPudding
+            </a>
+            
+            <button class="nav-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Beranda</a></li>
+                <li><a href="produk.html" class="nav-link">Produk</a></li>
+                <li><a href="lacak.html" class="nav-link">Lacak Pesanan</a></li>
+                <li><a href="index.html#kontak" class="nav-link">Kontak</a></li>
+                <li class="nav-cart-wrapper">
+                    <a href="keranjang.html" class="nav-link nav-cart-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" style="display: none;">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="login.html" id="navLoginBtn" class="btn btn-primary" style="padding: 8px 20px;">
+                        Login
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-4 mb-4">
+        <!-- Breadcrumb -->
+        <div style="margin-bottom: 20px; color: var(--text-light);">
+            <a href="index.html">Beranda</a> &gt; <a href="produk.html">Produk</a> &gt; <span id="breadcrumbName">Detail Produk</span>
+        </div>
+
+        <div id="detailContainer">
+            <!-- Content will be injected via JS -->
+            <div style="text-align: center; padding: 40px;">
+                <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--purple-accent);"></i>
+                <p class="mt-2">Memuat detail produk...</p>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <h3 class="mt-4 mb-3" style="text-align: center;">Produk Lainnya</h3>
+        <div class="product-grid" id="relatedProducts">
+            <!-- Injected via JS -->
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3><i class="fas fa-ice-cream"></i> WarungPudding</h3>
+                    <p style="color: var(--text-light); margin-bottom: 15px;">Puding sehat bentuk lucu kekinian di Tanjungpinang.</p>
+                    <div class="d-flex gap-2">
+                        <a href="https://instagram.com/warung.pudingenz01" target="_blank" style="background: var(--lavender); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--purple-accent);"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/6283180630769" target="_blank" style="background: var(--lavender); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: var(--purple-accent);"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Navigasi</h4>
+                    <ul>
+                        <li><a href="index.html">Beranda</a></li>
+                        <li><a href="produk.html">Katalog Produk</a></li>
+                        <li><a href="keranjang.html">Keranjang</a></li>
+                        <li><a href="lacak.html">Lacak Pesanan</a></li>
+                        <li><a href="login.html">Login Staff</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Kontak Kami</h4>
+                    <p><i class="fas fa-map-marker-alt" style="color: var(--purple-accent);"></i> Bazar GANET, TPI</p>
+                    <p><i class="fab fa-whatsapp" style="color: var(--purple-accent);"></i> +62 831-8063-0769</p>
+                    <p><i class="fab fa-instagram" style="color: var(--purple-accent);"></i> @warung.pudingenz01</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 WarungPudding UMKM Tanjungpinang. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-sync.js"></script>
+
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/auth.js"></script>
+    
+    <script>
+        // Menunggu seluruh elemen dokumen HTML selesai dimuat secara penuh (DOM ready)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Membaca query string 'id' dari URL (misal: detail.html?id=p1)
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+            // Mengambil daftar seluruh produk terdaftar
+            let products = getProducts();
+            
+            // Mendapatkan elemen kontainer tampilan detail dan rekomendasi produk terkait
+            const detailContainer = document.getElementById('detailContainer');
+            const breadcrumbName = document.getElementById('breadcrumbName');
+            const relatedProductsContainer = document.getElementById('relatedProducts');
+            
+            // Fungsi utama untuk memuat rincian spesifik produk di halaman detail
+            function renderDetail() {
+                // Mencari objek produk yang dicari berdasarkan ID produk
+                const product = products.find(p => p.id === productId);
+
+                // Jika produk tidak ditemukan (ID salah atau sudah dihapus)
+                if (!product) {
+                    detailContainer.innerHTML = `
+                        <div class="card text-center py-5">
+                            <i class="fas fa-box-open fa-3x" style="color: var(--lavender); margin-bottom: 15px;"></i>
+                            <h2 style="color: var(--purple-accent);">Produk tidak ditemukan</h2>
+                            <p class="mb-3">Maaf, produk yang Anda cari mungkin sudah dihapus.</p>
+                            <a href="produk.html" class="btn btn-primary">Kembali ke Katalog</a>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Memperbarui tulisan navigasi breadcrumb di atas detail produk
+                breadcrumbName.textContent = product.nama;
+
+                // Memeriksa status ketersediaan stok puding aktif
+                const isAvailable = product.stok > 0;
+                const btnState = isAvailable ? '' : 'disabled';
+                const btnStyle = isAvailable ? '' : 'opacity: 0.7; cursor: not-allowed;';
+                
+                // Menyusun template HTML deskripsi detail produk secara dinamis
+                detailContainer.innerHTML = `
+                    <div class="product-detail">
+                        <div>
+                            <!-- Foto produk dengan fallback otomatis jika url rusak -->
+                            <img src="${product.gambar}" alt="${product.nama}" class="detail-image" onerror="this.src='https://placehold.co/500x400/E6CCFF/9B59B6?text=Puding'">
+                        </div>
+                        <div>
+                            <!-- Label kategori produk -->
+                            <span class="badge" style="background: var(--lavender); color: var(--purple-accent); margin-bottom: 15px;">${product.kategori}</span>
+                            <h1 style="color: var(--text-dark); margin-bottom: 10px;">${product.nama}</h1>
+                            <h2 style="color: var(--pink-soft); margin-bottom: 20px;">${formatRupiah(product.harga)}</h2>
+                            
+                            <div style="margin-bottom: 20px; color: var(--text-light); line-height: 1.8;">
+                                <p>${product.deskripsi}</p>
+                            </div>
+                            
+                            <!-- Box status ketersediaan -->
+                            <div style="margin-bottom: 20px; padding: 15px; background: var(--bg-light); border-radius: 8px;">
+                                <p style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
+                                    <strong>Status:</strong> 
+                                    ${isAvailable 
+                                        ? '<span style="color: var(--purple-accent); display: inline-flex; align-items: center; gap: 5px;"><i class="fas fa-check-circle"></i> Tersedia</span>' 
+                                        : '<span style="color: var(--text-light); display: inline-flex; align-items: center; gap: 5px;"><i class="fas fa-times-circle"></i> Tidak Tersedia</span>'}
+                                </p>
+                            </div>
+
+                            <!-- Pilihan varian rasa puding jika stok tersedia -->
+                            ${isAvailable ? `
+                                <div style="margin-bottom: 30px;">
+                                    <label style="display: block; font-weight: bold; margin-bottom: 10px;">Varian Rasa Tambahan (Opsional):</label>
+                                    <div class="d-flex gap-3" style="flex-wrap: wrap;">
+                                        <label style="cursor: pointer;"><input type="radio" name="varian" value="Original" checked> Original</label>
+                                        <label style="cursor: pointer;"><input type="radio" name="varian" value="Extra Susu"> Extra Susu</label>
+                                        <label style="cursor: pointer;"><input type="radio" name="varian" value="Extra Choco"> Extra Choco</label>
+                                    </div>
+                                </div>
+                            ` : ''}
+
+                            <!-- Pengatur kuantitas (Quantity Selector) -->
+                            <div class="d-flex gap-3 align-items-center mb-4" style="flex-wrap: wrap;">
+                                <div class="qty-input">
+                                    <button class="qty-btn" onclick="const q=document.getElementById('buyQty'); if(q.value>1) q.value--">-</button>
+                                    <input type="number" id="buyQty" value="1" min="1" max="99" ${btnState}>
+                                    <button class="qty-btn" onclick="const q=document.getElementById('buyQty'); if(q.value<99) q.value++">+</button>
+                                </div>
+                            </div>
+
+                            <!-- Tombol aksi pembelian -->
+                            <div class="d-flex gap-3" style="flex-wrap: wrap;">
+                                <button onclick="handleAddToCart()" class="btn btn-secondary" style="flex: 1; min-width: 150px; ${btnStyle}" ${btnState}>
+                                    <i class="fas fa-cart-plus"></i> Tambah Keranjang
+                                </button>
+                                <button onclick="handleBuyNow()" class="btn btn-primary" style="flex: 1; min-width: 150px; ${btnStyle}" ${btnState}>
+                                    <i class="fas fa-shopping-bag"></i> Beli Sekarang
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Fungsi handler tombol Tambah Keranjang
+                window.handleAddToCart = function() {
+                    const qty = parseInt(document.getElementById('buyQty').value);
+                    const varianEl = document.querySelector('input[name="varian"]:checked');
+                    const varian = varianEl ? varianEl.value : 'Original';
+                    // Menambahkan item ke keranjang belanja (js/cart.js)
+                    addToCart(product.id, qty, varian);
+                };
+
+                // Fungsi handler tombol Beli Sekarang
+                window.handleBuyNow = function() {
+                    const qty = parseInt(document.getElementById('buyQty').value);
+                    const varianEl = document.querySelector('input[name="varian"]:checked');
+                    const varian = varianEl ? varianEl.value : 'Original';
+                    // Tambahkan ke keranjang dahulu, lalu arahkan langsung ke halaman checkout
+                    addToCart(product.id, qty, varian);
+                    window.location.href = 'checkout.html';
+                };
+
+                // Menyusun rekomendasi produk terkait (kategori rasa yang sama, ID berbeda, max 4 item)
+                const related = products.filter(p => p.kategori === product.kategori && p.id !== product.id).slice(0, 4);
+                
+                // Jika produk se-kategori kurang dari 4, lengkapi dengan produk acak lainnya agar layout tetap rapi
+                if (related.length < 4) {
+                    const others = products.filter(p => p.kategori !== product.kategori && p.id !== product.id);
+                    related.push(...others.slice(0, 4 - related.length));
+                }
+
+                // Render kartu-kartu produk rekomendasi terkait
+                relatedProductsContainer.innerHTML = related.map(p => `
+                    <div class="card product-card">
+                        <div class="product-image-container">
+                            <img src="${p.gambar}" alt="${p.nama}" class="product-image" onerror="this.src='https://placehold.co/300x200/E6CCFF/9B59B6?text=Puding'">
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-title">${p.nama}</h3>
+                            <p class="product-price">${formatRupiah(p.harga)}</p>
+                            <a href="detail.html?id=${p.id}" class="btn btn-outline mt-auto text-center" style="display: block;">Lihat Detail</a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Panggilan render pertama kali
+            renderDetail();
+
+            // Mendengarkan event real-time database sync produk dari Firebase
+            window.addEventListener('wp_products_sync', (e) => {
+                // Update produk lokal, lalu render ulang detailnya secara real-time
+                products = e.detail;
+                renderDetail();
+            });
+        });
+    </script>
+</body>
+</html>

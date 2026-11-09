@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Pesanan - Karyawan WarungPudding</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <style>
+        .sidebar-link i,
+        .stat-icon i,
+        .status-tab i {
+            color: var(--purple-accent);
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            text-align: right;
+            max-width: 60%;
+        }
+
+        .delivery-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .delivery-pickup {
+            background: #F3E8FF;
+            color: #7C3AED;
+        }
+
+        .delivery-kurir {
+            background: #FEF3C7;
+            color: #D97706;
+        }
+
+        .delivery-sent {
+            background: #D1FAE5;
+            color: #059669;
+        }
+
+        .btn-detail {
+            padding: 4px 8px;
+            font-size: 0.75rem;
+            border: 1px solid var(--lavender);
+            background: transparent;
+            color: var(--purple-accent);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-detail:hover {
+            background: var(--lavender);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="p-3 text-center mb-4 mt-3">
+                <i class="fas fa-user-circle fa-4x mb-2" style="color: var(--purple-accent);"></i>
+                <h3 id="displayUserName">Karyawan</h3>
+                <span class="badge" style="background: var(--lavender); color: var(--purple-accent);">Stand GANET</span>
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="pesanan.html" class="sidebar-link active">
+                    <i class="fas fa-clipboard-list"></i> Pesanan Masuk
+                </a>
+                <a href="stok.html" class="sidebar-link">
+                    <i class="fas fa-cookie-bite"></i> Kelola Stok
+                </a>
+                <a href="#" onclick="logout(); return false;" class="sidebar-link" style="color: #E74C3C;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2 class="mb-4"><i class="fas fa-clipboard-list" style="color: var(--purple-accent);"></i> Kelola Pesanan
+            </h2>
+
+            <!-- Stats -->
+            <div class="stats-grid mb-4">
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
+                        <i class="fas fa-cookie-bite"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Diproses</h4>
+                        <p id="statDiproses">0</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
+                        <i class="fas fa-box-open"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Siap Diambil/Kirim</h4>
+                        <p id="statSiap">0</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
+                        <i class="fas fa-motorcycle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Sedang Diantar</h4>
+                        <p id="statDiantar">0</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Selesai Hari Ini</h4>
+                        <p id="statSelesaiHariIni">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="status-tabs" id="statusFilters">
+                    <button class="status-tab active" data-status="Semua">Semua</button>
+                    <button class="status-tab" data-status="Diproses">Diproses</button>
+                    <button class="status-tab" data-status="Siap">Siap</button>
+                    <button class="status-tab" data-status="Diantar">Diantar</button>
+                    <button class="status-tab" data-status="Selesai">Selesai</button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>No. Pesanan</th>
+                                <th>Pelanggan</th>
+                                <th>Pengiriman</th>
+                                <th>Item</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content" style="padding: 30px; max-width: 550px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: var(--purple-accent);"><i class="fas fa-receipt"
+                        style="color: var(--purple-accent);"></i> Detail Pesanan</h3>
+                <button onclick="closeModal('detailModal')"
+                    style="background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--text-light);">&times;</button>
+            </div>
+            <div id="detailContent">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/firebase-sync.js"></script>
+
+    <!-- Scripts -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Menunggu seluruh elemen halaman selesai dimuat (DOM ready)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Melindungi halaman: memeriksa apakah peran pengguna saat ini adalah 'karyawan'
+            const user = checkAuth('karyawan');
+            // Jika tidak terverifikasi atau bukan karyawan, batalkan pemuatan naskah script
+            if (!user) return;
+
+            // Mendapatkan elemen body tabel tempat menampilkan daftar pesanan masuk
+            const ordersTableBody = document.getElementById('ordersTableBody');
+            // Mendapatkan seluruh tombol tab filter status pesanan
+            const statusFilters = document.querySelectorAll('.status-tab');
+            // Menyimpan status filter aktif, secara default menampilkan 'Semua' pesanan
+            let currentFilter = 'Semua';
+
+            // Fungsi utama untuk memuat data pesanan dan memperbarui tampilan antarmuka
+            function renderOrders() {
+                // Mengambil daftar pesanan dari LocalStorage, jika kosong gunakan array kosong []
+                const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
+
+                // Variabel bantu untuk menghitung statistik jumlah pesanan pada masing-masing status
+                let countDiproses = 0;
+                let countSiap = 0;
+                let countDiantar = 0;
+                let countSelesaiHariIni = 0;
+                // Mendapatkan string tanggal hari ini untuk mencocokkan laporan selesai harian
+                const todayStr = new Date().toDateString();
+
+                // Melakukan iterasi pesanan untuk menghitung kuantitas statistik dashboard
+                orders.forEach(o => {
+                    if (o.status === 'Diproses') countDiproses++;
+                    else if (o.status === 'Siap') countSiap++;
+                    else if (o.status === 'Diantar') countDiantar++;
+
+                    // Menghitung jumlah pesanan yang selesai khusus untuk hari ini saja
+                    if (o.status === 'Selesai') {
+                        try {
+                            const d = new Date(o.tanggal);
+                            if (d.toDateString() === todayStr) {
+                                countSelesaiHariIni++;
+                            }
+                        } catch (e) { }
+                    }
+                });
+
+                // Menuliskan hasil perhitungan statistik ke elemen counter di dashboard
+                document.getElementById('statDiproses').innerText = countDiproses;
+                document.getElementById('statSiap').innerText = countSiap;
+                document.getElementById('statDiantar').innerText = countDiantar;
+                document.getElementById('statSelesaiHariIni').innerText = countSelesaiHariIni;
+
+                // Melakukan penyaringan pesanan sesuai tab filter yang sedang aktif
+                let filtered = orders;
+                if (currentFilter !== 'Semua') {
+                    filtered = orders.filter(o => o.status === currentFilter);
+                }
+
+                // Mengurutkan pesanan berdasarkan urutan prioritas pengerjaan status
+                filtered.sort((a, b) => {
+                    const orderStatus = { 'Diproses': 1, 'Siap': 2, 'Diantar': 3, 'Selesai': 4 };
+                    return (orderStatus[a.status] || 99) - (orderStatus[b.status] || 99);
+                });
+
+                // Jika tidak ada pesanan setelah difilter
+                if (filtered.length === 0) {
+                    ordersTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center" style="padding: 40px;">
+                                <i class="fas fa-inbox fa-3x" style="color: var(--lavender); margin-bottom: 15px; display: block;"></i>
+                                <p style="color: var(--text-light);">Belum ada pesanan${currentFilter !== 'Semua' ? ' dengan status "' + currentFilter + '"' : ''}.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                // Render baris tabel pesanan secara dinamis
+                ordersTableBody.innerHTML = filtered.map(order => {
+                    let itemNames = '-';
+                    try {
+                        // Menggabungkan daftar nama item puding yang dipesan dipisahkan baris baru (<br>)
+                        if (order.items && Array.isArray(order.items)) {
+                            itemNames = order.items.map(i => `${i.qty || 1}x ${i.nama || 'Produk'}`).join('<br>');
+                        }
+                    } catch (e) { itemNames = '-'; }
+
+                    // Memformat nominal total harga ke Rupiah
+                    const totalDisplay = order.total ? formatRupiah(order.total) : 'Rp 0';
+
+                    // Memformat tampilan tanggal pesanan
+                    let tanggalDisplay = '-';
+                    if (order.tanggal) {
+                        try {
+                            const d = new Date(order.tanggal);
+                            tanggalDisplay = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+                        } catch (e) { tanggalDisplay = '-'; }
+                    }
+
+                    // Menentukan lencana visual (badge) untuk metode pengiriman (Kurir / Ambil Sendiri)
+                    const isKurir = order.metodePengambilan === 'Kirim via Kurir';
+                    let deliveryBadge = '';
+                    if (isKurir) {
+                        if (order.status === 'Diantar') {
+                            deliveryBadge = `<span class="delivery-badge delivery-sent"><i class="fas fa-motorcycle"></i> Diantar</span>`;
+                        } else if (order.status === 'Selesai') {
+                            deliveryBadge = `<span class="delivery-badge delivery-sent"><i class="fas fa-check-circle"></i> Terkirim</span>`;
+                        } else {
+                            deliveryBadge = `<span class="delivery-badge delivery-kurir"><i class="fas fa-motorcycle"></i> Kurir</span>`;
+                        }
+                    } else {
+                        deliveryBadge = `<span class="delivery-badge delivery-pickup"><i class="fas fa-store"></i> Ambil</span>`;
+                    }
+
+                    let badgeClass = '';
+                    let actions = '';
+
+                    // Mengatur warna badge status dan tombol aksi yang relevan berdasarkan status aktif pesanan
+                    if (order.status === 'Diproses') {
+                        badgeClass = 'badge-diproses';
+                        // Aksi: Jika pesanan siap diproduksi, ubah ke status 'Siap'
+                        actions = `<button onclick="updateStatus('${order.id}', 'Siap')" class="btn btn-primary btn-sm" style="padding: 4px 10px; font-size: 0.75rem;">Siap</button>`;
+                    } else if (order.status === 'Siap') {
+                        badgeClass = 'badge-siap';
+                        if (isKurir) {
+                            // Aksi Kurir: Jika siap kirim, jalankan aksi 'Antar'
+                            actions = `<button onclick="updateStatus('${order.id}', 'Diantar')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #F59E0B; color: white; border: none; border-radius: 8px;"><i class="fas fa-motorcycle"></i> Antar</button>`;
+                        } else {
+                            // Aksi Ambil: Jika pembeli mengambil di tempat, jalankan aksi 'Selesai'
+                            actions = `<button onclick="updateStatus('${order.id}', 'Selesai')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #10B981; color: white; border: none; border-radius: 8px;"><i class="fas fa-check"></i> Selesai</button>`;
+                        }
+                    } else if (order.status === 'Diantar') {
+                        badgeClass = 'badge-siap';
+                        // Aksi Kurir: Kurir mengonfirmasi pesanan telah 'Sampai' ke tangan pembeli
+                        actions = `<button onclick="updateStatus('${order.id}', 'Selesai')" class="btn btn-sm" style="padding: 4px 10px; font-size: 0.75rem; background: #10B981; color: white; border: none; border-radius: 8px;"><i class="fas fa-check"></i> Sampai</button>`;
+                    } else {
+                        badgeClass = 'badge-selesai';
+                        // Aksi Selesai: Tampilkan tanda centang hijau tanpa tombol aksi
+                        actions = `<span style="color: #10B981; font-size: 0.8rem;"><i class="fas fa-check-circle"></i></span>`;
+                    }
+
+                    // Mengembalikan kerangka HTML baris tabel untuk pesanan terkait
+                    return `
+                        <tr>
+                            <td>
+                                <strong style="font-size: 0.85rem;">${order.id || '-'}</strong><br>
+                                <small class="text-muted">${tanggalDisplay}</small>
+                            </td>
+                            <td>
+                                ${order.pelanggan || '-'}<br>
+                                <div style="display: flex; gap: 4px; margin-top: 4px;">
+                                    <!-- Tombol aksi pembantu untuk detail pesanan dan cetak struk thermal -->
+                                    <button class="btn-detail" onclick="showDetail('${order.id}')"><i class="fas fa-eye fa-fw"></i> Detail</button>
+                                    <button class="btn-detail" onclick="printReceipt('${order.id}')" style="border-color: var(--purple-accent); color: var(--purple-accent);"><i class="fas fa-print fa-fw"></i> Cetak</button>
+                                </div>
+                            </td>
+                            <td>${deliveryBadge}</td>
+                            <td style="font-size: 0.85rem;">${itemNames}</td>
+                            <td style="font-weight: bold; font-size: 0.85rem;">${totalDisplay}</td>
+                            <td><span class="badge ${badgeClass}" style="font-size: 0.7rem;">${order.status || '-'}</span></td>
+                            <td>${actions}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            // Fungsi global untuk menampilkan Modal Detail rincian pesanan secara mendalam
+            window.showDetail = function (orderId) {
+                const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
+                const order = orders.find(o => o.id === orderId);
+                if (!order) return;
+
+                const isKurir = order.metodePengambilan === 'Kirim via Kurir';
+
+                // Menyusun string tanggal lengkap beserta jam pemesanan
+                let tanggalFull = '-';
+                if (order.tanggal) {
+                    try {
+                        const d = new Date(order.tanggal);
+                        tanggalFull = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + ', ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    } catch (e) { }
+                }
+
+                // Membangun daftar item puding belanjaan pembeli
+                let itemsHtml = '';
+                if (order.items && Array.isArray(order.items)) {
+                    itemsHtml = order.items.map(i => `
+                        <div style="display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.85rem;">
+                            <span>${i.qty || 1}x ${i.nama || 'Produk'} (${i.varian || 'Original'})</span>
+                            <span style="font-weight: 600;">${i.harga ? formatRupiah(i.harga * (i.qty || 1)) : '-'}</span>
+                        </div>
+                    `).join('');
+                }
+
+                // HTML konten detail rincian transaksi lengkap dan template chat WhatsApp otomatis
+                const content = `
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-hashtag" style="color: var(--purple-accent);"></i> No. Pesanan</span>
+                        <span class="detail-value">${order.id}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-calendar" style="color: var(--purple-accent);"></i> Tanggal</span>
+                        <span class="detail-value">${tanggalFull}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-user" style="color: var(--purple-accent);"></i> Pelanggan</span>
+                        <span class="detail-value">${order.pelanggan || '-'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-phone" style="color: var(--purple-accent);"></i> WhatsApp</span>
+                        <span class="detail-value"><a href="https://wa.me/${(order.telepon || '').replace(/^0/, '62')}" target="_blank" style="color: var(--purple-accent);">${order.telepon || '-'}</a></span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-truck" style="color: var(--purple-accent);"></i> Pengiriman</span>
+                        <span class="detail-value">${order.metodePengambilan || 'Ambil di Bazar'}</span>
+                    </div>
+                    ${isKurir ? `
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-map-marker-alt" style="color: var(--purple-accent);"></i> Alamat</span>
+                        <span class="detail-value" style="font-size: 0.8rem;">${order.alamat || '-'}</span>
+                    </div>
+                    ` : ''}
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-wallet" style="color: var(--purple-accent);"></i> Pembayaran</span>
+                        <span class="detail-value">${order.metodePembayaran || '-'}</span>
+                    </div>
+                    ${order.catatan ? `
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-sticky-note" style="color: var(--purple-accent);"></i> Catatan</span>
+                        <span class="detail-value" style="font-size: 0.8rem; font-style: italic;">${order.catatan}</span>
+                    </div>
+                    ` : ''}
+
+                    <div style="margin-top: 15px; padding: 12px; background: var(--bg-light); border-radius: 10px;">
+                        <h4 style="margin: 0 0 10px; font-size: 0.85rem; color: var(--purple-accent);"><i class="fas fa-shopping-bag" style="color: var(--purple-accent);"></i> Item Pesanan</h4>
+                        ${itemsHtml}
+                        <div style="border-top: 1px dashed #DDD; margin-top: 8px; padding-top: 8px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-light);">
+                                <span>Subtotal</span>
+                                <span>${order.subtotal ? formatRupiah(order.subtotal) : '-'}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-light);">
+                                <span>Ongkir</span>
+                                <span>${order.ongkir ? formatRupiah(order.ongkir) : 'Gratis'}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 1rem; margin-top: 5px; color: var(--purple-accent);">
+                                <span>Total</span>
+                                <span>${order.total ? formatRupiah(order.total) : '-'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${order.telepon ? `
+                    <div style="margin-top: 15px; padding: 12px; background: #F5EFFF; border-radius: 10px; border: 1px solid rgba(155, 89, 182, 0.15);">
+                        <h4 style="margin: 0 0 10px; font-size: 0.85rem; color: var(--purple-accent);"><i class="fab fa-whatsapp"></i> Pintasan Template WhatsApp</h4>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <!-- Tautan instan untuk mengabari pembeli via WhatsApp template bahwa pesanan sedang dimasak -->
+                            <a href="https://wa.me/${(order.telepon).replace(/^0/, '62')}?text=${encodeURIComponent('Halo kak ' + (order.pelanggan || '') + ', pesanan ' + order.id + ' sedang kami siapkan ya. Terima kasih! 🍮🌸')}" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 8px 12px; border-radius: 8px; justify-content: flex-start; text-align: left; background: var(--white); color: var(--purple-dark); border: 1px solid var(--lavender);">
+                                <i class="fab fa-whatsapp fa-lg" style="color: #25D366;"></i> 🧑‍🍳 Konfirmasi / Siapkan Pesanan
+                            </a>
+                            
+                            ${!isKurir ? `
+                            <!-- Template chat jika pesanan tipe Ambil Sendiri telah matang/siap diambil -->
+                            <a href="https://wa.me/${(order.telepon).replace(/^0/, '62')}?text=${encodeURIComponent('Halo kak ' + (order.pelanggan || '') + ', pesanan ' + order.id + ' sudah siap diambil di booth bazar WarungPudding ya. Ditunggu kedatangannya! 🍮✨')}" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 8px 12px; border-radius: 8px; justify-content: flex-start; text-align: left; background: var(--white); color: var(--purple-dark); border: 1px solid var(--lavender);">
+                                <i class="fab fa-whatsapp fa-lg" style="color: #25D366;"></i> 🏪 Siap Diambil di Bazar
+                            </a>
+                            ` : ''}
+
+                            ${isKurir ? `
+                            <!-- Template chat jika pesanan tipe pengiriman sedang di jalan dibawa kurir -->
+                            <a href="https://wa.me/${(order.telepon).replace(/^0/, '62')}?text=${encodeURIComponent('Halo kak ' + (order.pelanggan || '') + ', pesanan ' + order.id + ' sedang dalam perjalanan ke alamat Anda oleh kurir kami. Mohon ditunggu ya! 🏍️💨')}" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 8px 12px; border-radius: 8px; justify-content: flex-start; text-align: left; background: var(--white); color: var(--purple-dark); border: 1px solid var(--lavender);">
+                                <i class="fab fa-whatsapp fa-lg" style="color: #25D366;"></i> 🏍️ Sedang Diantar Kurir
+                            </a>
+                            ` : ''}
+
+                            <!-- Template chat ucapan terima kasih karena transaksi telah tuntas sukses -->
+                            <a href="https://wa.me/${(order.telepon).replace(/^0/, '62')}?text=${encodeURIComponent('Halo kak ' + (order.pelanggan || '') + ', pesanan ' + order.id + ' telah selesai diterima. Terima kasih banyak sudah berbelanja di WarungPudding! Semoga kakak suka ya! ❤️ Pudding Karakter WarungPudding')}" target="_blank" class="btn btn-secondary" style="font-size: 0.8rem; padding: 8px 12px; border-radius: 8px; justify-content: flex-start; text-align: left; background: var(--white); color: var(--purple-dark); border: 1px solid var(--lavender);">
+                                <i class="fab fa-whatsapp fa-lg" style="color: #25D366;"></i> ✅ Pesanan Selesai / Terima Kasih
+                            </a>
+                        </div>
+                    </div>
+                    ` : ''}
+                    <button onclick="printReceipt('${order.id}')" class="btn btn-outline w-100 mt-3" style="width: 100%; border-color: var(--purple-accent); color: var(--purple-accent); font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <i class="fas fa-print"></i> Cetak Struk Belanja
+                    </button>
+                `;
+
+                // Menyuntikkan string HTML konten ke dalam elemen body modal detail
+                document.getElementById('detailContent').innerHTML = content;
+                // Membuka modal detail
+                openModal('detailModal');
+            };
+
+            // Fungsi global untuk mencetak struk belanja thermal (format struk printer kasir)
+            window.printReceipt = function (orderId) {
+                const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
+                const order = orders.find(o => o.id === orderId);
+                if (!order) return;
+
+                const isKurir = order.metodePengambilan === 'Kirim via Kurir';
+
+                let tanggalFull = '-';
+                if (order.tanggal) {
+                    try {
+                        const d = new Date(order.tanggal);
+                        tanggalFull = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' }) + ', ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    } catch (e) { }
+                }
+
+                // Menyiapkan teks nominal yang diformat Rupiah untuk struk
+                const subtotalFormatted = order.subtotal ? formatRupiah(order.subtotal) : formatRupiah(order.total);
+                const totalFormatted = formatRupiah(order.total);
+                const ongkirFormatted = order.ongkir ? formatRupiah(order.ongkir) : 'Gratis';
+
+                // Menyusun baris-baris daftar belanjaan di struk kasir
+                const itemsHtml = (order.items || []).map(i => `
+                    <tr>
+                        <td>
+                            <strong>${i.nama || 'Produk'}</strong><br>
+                            <span style="font-size: 9px; color: #555;">Varian: ${i.varian || 'Original'}</span>
+                        </td>
+                        <td style="text-align: center;">${i.qty || 1}</td>
+                        <td style="text-align: right;">${formatRupiah((i.harga || 0) * (i.qty || 1))}</td>
+                    </tr>
+                `).join('');
+
+                // Membuka jendela cetak kosong baru
+                const printWindow = window.open('', '_blank', 'width=350,height=600');
+                if (!printWindow) {
+                    showToast('Gagal mencetak! Izinkan popup di browser Anda.', 'error');
+                    return;
+                }
+
+                // Menulis struktur HTML struk belanja lengkap dengan CSS kasir monospace sederhana
+                printWindow.document.write(`
+                    ${'<!'}DOCTYPE html>
+                    <html lang="id">
+                    ${'<'}head>
+                        <title>Struk Pesanan - ${order.id}</title>
+                        <style>
+                            @media print {
+                                body { margin: 0; padding: 0; }
+                                @page { margin: 0; }
+                            }
+                            body {
+                                font-family: 'Courier New', Courier, monospace;
+                                width: 280px;
+                                margin: 0 auto;
+                                padding: 10px;
+                                font-size: 11px;
+                                line-height: 1.4;
+                                color: #000;
+                            }
+                            .text-center { text-align: center; }
+                            .divider { border-top: 1px dashed #000; margin: 8px 0; }
+                            .bold { font-weight: bold; }
+                            .header { margin-bottom: 12px; }
+                            .header h2 { margin: 0 0 4px 0; font-size: 14px; letter-spacing: 1px; }
+                            .header p { margin: 2px 0; font-size: 9px; }
+                            .info-table, .item-table { width: 100%; border-collapse: collapse; }
+                            .info-table td { padding: 2px 0; font-size: 10px; }
+                            .item-table th, .item-table td { padding: 4px 0; font-size: 10px; vertical-align: top; }
+                            .item-table th { border-bottom: 1px dashed #000; text-align: left; }
+                            .footer { margin-top: 15px; font-size: 9px; text-align: center; }
+                        </style>
+                    ${'</'}head>
+                    ${'<'}body>
+                        <div class="header text-center">
+                            <h2>WARUNG PUDDING</h2>
+                            <p>Puding Karakter Lucu & Lezat</p>
+                            <p>Bazar GANET, Tanjungpinang</p>
+                            <p>WA: 0831-8063-0769</p>
+                        </div>
+                        
+                        <div class="divider"></div>
+                        
+                        <table class="info-table">
+                            <tr>
+                                <td class="bold">No. Pesanan:</td>
+                                <td style="text-align: right;">${order.id}</td>
+                            </tr>
+                            <tr>
+                                <td>Tanggal:</td>
+                                <td style="text-align: right;">${tanggalFull}</td>
+                            </tr>
+                            <tr>
+                                <td>Pelanggan:</td>
+                                <td style="text-align: right;">${order.pelanggan || '-'}</td>
+                            </tr>
+                            <tr>
+                                <td>Metode:</td>
+                                <td style="text-align: right;">${order.metodePengambilan || 'Ambil'}</td>
+                            </tr>
+                            ${isKurir ? `
+                            <tr>
+                                <td>Alamat:</td>
+                                <td style="text-align: right; font-size: 9px;">${order.alamat || '-'}</td>
+                            </tr>
+                            ` : ''}
+                        </table>
+                        
+                        <div class="divider"></div>
+                        
+                        <table class="item-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th style="text-align: center; width: 30px;">Qty</th>
+                                    <th style="text-align: right; width: 80px;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHtml}
+                            </tbody>
+                        </table>
+                        
+                        <div class="divider"></div>
+                        
+                        <table class="info-table">
+                            <tr>
+                                <td>Subtotal:</td>
+                                <td style="text-align: right;">${subtotalFormatted}</td>
+                            </tr>
+                            ${order.ongkir ? `
+                            <tr>
+                                <td>Ongkir:</td>
+                                <td style="text-align: right;">${ongkirFormatted}</td>
+                            </tr>
+                            ` : ''}
+                            <tr class="bold" style="font-size: 12px;">
+                                <td>TOTAL:</td>
+                                <td style="text-align: right;">${totalFormatted}</td>
+                            </tr>
+                            <tr>
+                                <td>Pembayaran:</td>
+                                <td style="text-align: right;">${order.metodePembayaran || '-'}</td>
+                            </tr>
+                        </table>
+                        
+                        ${order.catatan ? `
+                        <div class="divider"></div>
+                        <div class="bold">Catatan:</div>
+                        <div style="font-style: italic; font-size: 10px;">"${order.catatan}"</div>
+                        ` : ''}
+                        
+                        <div class="divider"></div>
+                        
+                        <div class="footer">
+                            <p>Terima kasih atas pesanan Anda!</p>
+                            <p>WarungPudding - Enak & Kekinian</p>
+                        </div>
+                    ${'</'}body>
+                    ${'</'}html>
+                `);
+
+                // Menginstruksikan jendela struk baru untuk membuka dialog print bawaan browser
+                const scriptEl = printWindow.document.createElement('script');
+                scriptEl.textContent = 'window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 500); };';
+                printWindow.document.body.appendChild(scriptEl);
+                printWindow.document.close();
+            };
+
+            // Fungsi global untuk memperbarui status pengerjaan pesanan di Firebase
+            window.updateStatus = function (orderId, newStatus) {
+                // Menyimpan status baru langsung ke path spesifik order terkait di Firebase cloud
+                db.ref('orders/' + orderId + '/status').set(newStatus)
+                    .then(() => {
+                        // Menyiapkan pesan toast sukses sesuai dengan status baru yang dipilih
+                        const msgs = {
+                            'Siap': 'Pesanan siap diambil/diantar!',
+                            'Diantar': 'Pesanan sedang diantar oleh kurir!',
+                            'Selesai': 'Pesanan telah selesai!'
+                        };
+                        showToast(msgs[newStatus] || `Status: ${newStatus}`);
+                    })
+                    .catch(err => {
+                        console.error("Gagal update status di Firebase:", err);
+                        showToast('Gagal mengubah status di database cloud!', 'error');
+                    });
+            };
+
+            // Menangani klik pada tab filter untuk mengubah status pesanan yang ditampilkan
+            statusFilters.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Menghapus kelas 'active' dari semua tab
+                    statusFilters.forEach(t => t.classList.remove('active'));
+                    // Menambahkan kelas 'active' ke tab yang baru diklik
+                    tab.classList.add('active');
+                    // Menyimpan kriteria filter status yang baru
+                    currentFilter = tab.getAttribute('data-status');
+                    // Me-render ulang daftar pesanan sesuai filter terpilih
+                    renderOrders();
+                });
+            });
+
+            // Panggilan render pesanan pertama kali saat halaman dibuka
+            renderOrders();
+
+            // Mendengarkan pembaruan real-time daftar pesanan baru dari Firebase sync event
+            window.addEventListener('wp_orders_sync', () => {
+                // Refresh list tabel secara instan tanpa reload halaman
+                renderOrders();
+            });
+        });
+    </script>
+</body>
+
+</html>

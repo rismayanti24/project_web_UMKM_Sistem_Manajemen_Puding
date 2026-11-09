@@ -1,0 +1,357 @@
+/* css/responsive.css */
+
+/* Tablet and smaller (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 20px;
+    }
+    
+    .navbar {
+        margin: 0;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-top: none;
+        max-width: 100%;
+        top: 0;
+    }
+    
+    .hero-wrapper {
+        gap: 40px;
+    }
+    
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+    
+    .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .dashboard-layout {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #F1F5F9;
+        padding: 20px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .sidebar > div {
+        margin-bottom: 0 !important;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .sidebar-menu {
+        flex-direction: row;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+        width: 100%;
+        margin-top: 15px;
+    }
+    
+    .sidebar-link {
+        flex: 1;
+        justify-content: center;
+        border-radius: 30px;
+    }
+    
+    .cart-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .cart-summary {
+        position: static;
+        margin-top: 30px;
+    }
+
+    /* Kontak section tablet */
+    .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 50px;
+        text-align: center;
+    }
+
+    .contact-info-panel h2 {
+        font-size: 2.3rem;
+    }
+
+    .contact-info-list {
+        align-items: center;
+    }
+
+    .contact-info-item {
+        width: 100%;
+        max-width: 500px;
+        text-align: left;
+    }
+
+    .contact-buttons-row {
+        justify-content: center;
+    }
+
+    .contact-map-wrapper {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+}
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: var(--shadow-md);
+        padding: 20px 24px 30px;
+        gap: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    
+    .nav-menu.active {
+        display: flex;
+        animation: fadeInUp 0.3s ease forwards;
+    }
+    
+    .nav-toggle {
+        display: block;
+    }
+    
+    .nav-cart-wrapper {
+        align-self: flex-start;
+        width: 38px;
+        height: 38px;
+    }
+    
+    .hero {
+        padding: 40px 0 60px;
+    }
+    
+    .hero-wrapper {
+        flex-direction: column;
+        text-align: center;
+        gap: 40px;
+    }
+    
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-content p {
+        max-width: 100%;
+    }
+    
+    .hero-content .d-flex {
+        justify-content: center;
+    }
+    
+    .hero-image {
+        margin-top: 20px;
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .steps-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .product-detail {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 24px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-responsive {
+        border: 1px solid #F1F5F9;
+    }
+    
+    .page-header {
+        padding: 50px 20px;
+        margin-bottom: 40px;
+    }
+    
+    .page-header h1 {
+        font-size: 2rem;
+    }
+    
+    .footer-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 40px;
+    }
+    
+    .footer-contact p {
+        justify-content: center;
+    }
+
+    .footer-brand .d-flex {
+        justify-content: center;
+    }
+
+    /* Kontak section mobile */
+    .contact-info-panel h2 {
+        font-size: 2rem;
+    }
+
+    .contact-buttons-row {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .contact-buttons-row .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Product card responsive */
+    .product-card .product-info {
+        padding: 16px;
+    }
+
+    .product-card .product-title {
+        font-size: 1rem;
+    }
+
+    .product-card .product-price {
+        font-size: 1rem;
+        margin-bottom: 10px;
+    }
+
+    .product-card .d-flex.gap-2 {
+        flex-direction: column;
+    }
+
+    /* Login responsive */
+    .login-container {
+        padding: 0 15px;
+    }
+}
+
+/* Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .steps-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .hero-content h1 {
+        font-size: 1.8rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+    
+    .cart-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .cart-item-img {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .cart-item .d-flex {
+        justify-content: center !important;
+        margin-top: 15px;
+    }
+    
+    .form-row {
+        flex-direction: column;
+    }
+    
+    .card {
+        padding: 20px;
+    }
+
+    /* Smaller nav on very small screens */
+    .nav-logo {
+        font-size: 1.2rem;
+    }
+
+    .nav-logo i {
+        font-size: 1.4rem;
+    }
+
+    /* Kontak buttons stack */
+    .contact-buttons-row {
+        flex-direction: column;
+    }
+
+    /* Filters scroll */
+    .filters {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 10px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .filter-btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Feature cards more compact */
+    .feature-card {
+        padding: 25px 20px;
+    }
+
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+    }
+
+    /* Steps compact */
+    .step-card {
+        padding: 35px 20px 25px;
+    }
+
+    .step-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
+        margin-bottom: 15px;
+    }
+}

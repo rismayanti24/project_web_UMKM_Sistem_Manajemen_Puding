@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Produk - WarungPudding</title>
+    <meta name="description" content="Katalog lengkap puding karakter lucu dari WarungPudding. Coklat, Strawberry, Matcha, Vanilla, dan karakter unik lainnya.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-logo">
+                <i class="fas fa-ice-cream"></i> WarungPudding
+            </a>
+            
+            <button class="nav-toggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Beranda</a></li>
+                <li><a href="produk.html" class="nav-link active">Produk</a></li>
+                <li><a href="lacak.html" class="nav-link">Lacak Pesanan</a></li>
+                <li><a href="index.html#kontak" class="nav-link">Kontak</a></li>
+                <li class="nav-cart-wrapper">
+                    <a href="keranjang.html" class="nav-link nav-cart-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-badge" style="display: none;">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="login.html" id="navLoginBtn" class="btn btn-primary" style="padding: 8px 20px;">
+                        Login
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <div class="page-header">
+        <h1>Katalog Puding Karakter</h1>
+        <p style="color: var(--text-dark); position: relative; z-index: 1;">Temukan varian puding favoritmu di sini</p>
+        <div class="floating-badge badge-bazar" style="bottom: 15px; right: 20px;">Bazar GANET</div>
+        <div class="floating-badge badge-halal" style="top: 15px; left: 20px; bottom: auto;"><i class="fas fa-heart" style="color: var(--pink-soft);"></i> Halal & Higienis</div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mb-4">
+        <!-- Search and Filter -->
+        <div class="card mb-4" style="border: 1px solid rgba(155, 89, 182, 0.1); box-shadow: var(--shadow-sm);">
+            <div class="form-group mb-3">
+                <div style="position: relative;">
+                    <i class="fas fa-search" style="position: absolute; left: 15px; top: 15px; color: var(--text-light);"></i>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Cari Rasa Puding..." style="padding-left: 45px; background: #FDFBFF; border-color: rgba(155,89,182,0.15);">
+                </div>
+            </div>
+            
+            <div class="filters" id="categoryFilters">
+                <button class="filter-btn active" data-filter="Semua"><i class="fas fa-border-all"></i> Semua</button>
+                <button class="filter-btn" data-filter="Coklat"><i class="fas fa-cookie-bite"></i> Coklat</button>
+                <button class="filter-btn" data-filter="Strawberry"><i class="fas fa-heart"></i> Strawberry</button>
+                <button class="filter-btn" data-filter="Matcha"><i class="fas fa-leaf"></i> Matcha</button>
+                <button class="filter-btn" data-filter="Vanilla"><i class="fas fa-ice-cream"></i> Vanilla</button>
+                <button class="filter-btn" data-filter="Dinosaurus"><i class="fas fa-dragon"></i> Dinosaurus</button>
+                <button class="filter-btn" data-filter="Kelinci"><i class="fas fa-paw"></i> Kelinci</button>
+            </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="product-grid" id="productContainer">
+            <!-- Products will be injected here via JS -->
+            <div style="text-align: center; width: 100%; grid-column: 1 / -1; padding: 40px;">
+                <i class="fas fa-spinner fa-spin fa-2x" style="color: var(--purple-accent);"></i>
+                <p class="mt-2">Memuat produk...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3><i class="fas fa-ice-cream"></i> WarungPudding</h3>
+                    <p style="color: var(--text-light); margin-bottom: 15px;">Puding sehat bentuk lucu kekinian di Tanjungpinang.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Navigasi</h4>
+                    <ul>
+                        <li><a href="index.html">Beranda</a></li>
+                        <li><a href="produk.html">Katalog Produk</a></li>
+                        <li><a href="keranjang.html">Keranjang</a></li>
+                        <li><a href="lacak.html">Lacak Pesanan</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Kontak Kami</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> Bazar GANET, TPI</p>
+                    <p><i class="fab fa-whatsapp"></i> +62 831-8063-0769</p>
+                    <p><i class="fab fa-instagram"></i> @warung.pudingenz01</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 WarungPudding UMKM Tanjungpinang. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firebase-sync.js"></script>
+
+    <script src="js/main.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/auth.js"></script>
+    
+    <script>
+    <script>
+        // Menunggu seluruh elemen halaman selesai dimuat secara penuh (DOM ready)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Mengambil daftar seluruh produk
+            let products = getProducts();
+            // Mendapatkan elemen kontainer katalog grid produk
+            const productContainer = document.getElementById('productContainer');
+            // Mendapatkan kolom input pencarian langsung (live search)
+            const searchInput = document.getElementById('searchInput');
+            // Mendapatkan seluruh tombol filter kategori produk
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            // Inisialisasi status filter aktif awal dan string query pencarian
+            let currentFilter = 'Semua';
+            let searchQuery = '';
+
+            // Fungsi utama untuk me-render kartu-kartu katalog produk di layar
+            function renderProducts() {
+                // Bersihkan kontainer sebelum menggambar ulang
+                productContainer.innerHTML = '';
+                
+                // Menyaring produk berdasarkan filter kategori dan query pencarian aktif
+                let filteredProducts = products.filter(p => {
+                    const matchCategory = currentFilter === 'Semua' || p.kategori === currentFilter;
+                    const matchSearch = p.nama.toLowerCase().includes(searchQuery) || p.kategori.toLowerCase().includes(searchQuery);
+                    return matchCategory && matchSearch;
+                });
+
+                // Jika hasil penyaringan kosong (produk tidak ditemukan)
+                if (filteredProducts.length === 0) {
+                    productContainer.innerHTML = `
+                        <div style="text-align: center; width: 100%; grid-column: 1 / -1; padding: 40px;">
+                            <i class="fas fa-box-open fa-3x" style="color: var(--lavender); margin-bottom: 15px;"></i>
+                            <h3 style="color: var(--text-light);">Yah, produk tidak ditemukan</h3>
+                            <p style="color: var(--text-light);">Coba cari dengan kata kunci lain.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Menggambar masing-masing kartu produk hasil filter
+                filteredProducts.forEach(p => {
+                    // Memeriksa ketersediaan stok
+                    const available = p.stok > 0;
+                    
+                    // Menyusun tombol tambah/beli berdasarkan ketersediaan stok
+                    const btnHtml = available
+                        ? `<button onclick="addToCart('${p.id}')" class="btn btn-primary" style="flex: 1; padding: 6px 8px; font-size: 0.8rem;"><i class="fas fa-cart-plus fa-fw"></i> Tambah</button>`
+                        : `<button disabled class="btn btn-secondary" style="flex: 1; opacity: 0.6; cursor: not-allowed; padding: 6px 8px; font-size: 0.8rem;"><i class="fas fa-times-circle fa-fw"></i> Habis</button>`;
+
+                    // Membuat elemen kartu baru secara dinamis
+                    const card = document.createElement('div');
+                    card.className = 'card product-card';
+                    if (!available) card.classList.add('product-unavailable');
+                    
+                    card.innerHTML = `
+                        <div class="product-image-container">
+                            <img src="${p.gambar}" alt="${p.nama}" class="product-image" onerror="this.src='https://placehold.co/300x200/E6CCFF/9B59B6?text=Puding'">
+                            <!-- Overlay label habis jika stok kosong -->
+                            ${!available ? '<div class="unavailable-overlay"><span>Habis</span></div>' : ''}
+                        </div>
+                        <div class="product-info">
+                            <span class="badge" style="background: var(--bg-light); color: var(--purple-accent); width: fit-content; margin-bottom: 10px;">${p.kategori}</span>
+                            <h3 class="product-title">${p.nama}</h3>
+                            <p class="product-price">${formatRupiah(p.harga)}</p>
+                            <div class="mt-auto d-flex gap-2">
+                                <!-- Tombol detail puding -->
+                                <a href="detail.html?id=${p.id}" class="btn btn-outline" style="flex: 1; padding: 6px 8px; font-size: 0.8rem;"><i class="fas fa-eye fa-fw"></i> Detail</a>
+                                ${btnHtml}
+                            </div>
+                        </div>
+                    `;
+                    productContainer.appendChild(card);
+                });
+            }
+
+            // Menginisialisasi event pencarian langsung (live search) saat pengguna mengetik
+            searchInput.addEventListener('input', (e) => {
+                searchQuery = e.target.value.toLowerCase();
+                renderProducts();
+            });
+
+            // Menginisialisasi event filter kategori saat tombol kategori diklik
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Nonaktifkan tab lama
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Aktifkan tab baru
+                    btn.classList.add('active');
+                    // Ganti filter aktif dan render ulang
+                    currentFilter = btn.getAttribute('data-filter');
+                    renderProducts();
+                });
+            });
+
+            // Pemanggilan render katalog produk pertama kali
+            renderProducts();
+
+            // Mendengarkan pembaruan real-time daftar produk dari Firebase cloud sync
+            window.addEventListener('wp_products_sync', (e) => {
+                products = e.detail;
+                renderProducts();
+            });
+        });
+    </script>
+</body>
+</html>

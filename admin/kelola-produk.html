@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Produk - Admin WarungPudding</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="p-3 text-center mb-4 mt-3">
+                <i class="fas fa-user-shield fa-4x mb-2" style="color: var(--purple-accent);"></i>
+                <h3 id="displayUserName">Admin</h3>
+                <span class="badge" style="background: var(--pink-soft); color: var(--text-dark);">Administrator</span>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="sidebar-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="kelola-produk.html" class="sidebar-link active">
+                    <i class="fas fa-box-open"></i> Kelola Produk
+                </a>
+                <a href="laporan.html" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i> Laporan
+                </a>
+                <a href="#" onclick="logout(); return false;" class="sidebar-link" style="color: #E74C3C;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Kelola Produk</h2>
+                <button onclick="openProductModal()" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Tambah Produk
+                </button>
+            </div>
+            
+            <div class="dashboard-card">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Foto</th>
+                                <th>Nama Produk</th>
+                                <th>Kategori</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Product Modal (Add/Edit) -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <button onclick="closeModal('productModal')" class="modal-close"><i class="fas fa-times"></i></button>
+            <h2 id="modalTitle" class="mb-4" style="color: var(--purple-accent);">Tambah Produk</h2>
+            
+            <form id="productForm">
+                <input type="hidden" id="prodId">
+                
+                <div class="form-group">
+                    <label class="form-label">Nama Produk *</label>
+                    <input type="text" id="prodNama" class="form-control" required>
+                </div>
+                
+                <div class="d-flex gap-3" style="flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Kategori *</label>
+                        <select id="prodKategori" class="form-control" required>
+                            <option value="">Pilih Kategori</option>
+                            <option value="Coklat">Coklat</option>
+                            <option value="Strawberry">Strawberry</option>
+                            <option value="Matcha">Matcha</option>
+                            <option value="Vanilla">Vanilla</option>
+                            <option value="Dinosaurus">Dinosaurus</option>
+                            <option value="Kelinci">Kelinci</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Harga (Rp) *</label>
+                        <input type="number" id="prodHarga" class="form-control" required min="1000">
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3" style="flex-wrap: wrap;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Stok *</label>
+                        <input type="number" id="prodStok" class="form-control" required min="0">
+                    </div>
+                    
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Foto Produk</label>
+                        <select id="prodGambar" class="form-control">
+                            <option value="images/kaki kucing puding.jpg">Kaki Kucing Puding</option>
+                            <option value="images/kelinci puding.jpeg">Kelinci Puding</option>
+                            <option value="images/puding dino.jpg">Puding Dino</option>
+                            <option value="images/puding tusuk.jpg">Puding Tusuk</option>
+                            <option value="images/dino blue.jpg">Dino Blue</option>
+                            <option value="images/dino pink.jpg">Dino Pink</option>
+                        </select>
+                        <small style="color: var(--text-light);">(Simulasi upload foto)</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea id="prodDeskripsi" class="form-control"></textarea>
+                </div>
+                
+                <div class="d-flex gap-2 justify-content-center mt-4">
+                    <button type="button" onclick="closeModal('productModal')" class="btn btn-outline" style="flex: 1;">Batal</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/firebase-sync.js"></script>
+
+    <!-- Scripts -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        // Menunggu seluruh elemen HTML halaman selesai dimuat (DOM ready)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Melindungi halaman: memeriksa apakah peran pengguna saat ini adalah 'admin'
+            const user = checkAuth('admin');
+            // Jika tidak terverifikasi atau bukan admin, hentikan proses (halaman otomatis diredirect oleh checkAuth)
+            if (!user) return;
+            
+            // Me-render tabel produk untuk pertama kali
+            renderProductsTable();
+
+            // Mendengarkan pembaruan data real-time produk dari Firebase sync event
+            window.addEventListener('wp_products_sync', () => {
+                // Gambar ulang tabel produk jika ada perubahan data di Firebase cloud
+                renderProductsTable();
+            });
+
+            // Menangani pengiriman formulir tambah/edit produk (Submit Form)
+            document.getElementById('productForm').addEventListener('submit', (e) => {
+                // Membatalkan aksi default submit form (agar halaman tidak memuat ulang)
+                e.preventDefault();
+                
+                // Jika ID produk kosong, buat ID acak (misal: p748), jika tidak, gunakan ID produk yang sedang diedit
+                const id = document.getElementById('prodId').value || 'p' + Math.floor(Math.random() * 1000);
+                // Flag penanda apakah ini penambahan produk baru (isNew) atau memperbarui produk lama
+                const isNew = !document.getElementById('prodId').value;
+                
+                // Menyusun objek data produk dari nilai-nilai input form
+                const productData = {
+                    id: id,
+                    nama: document.getElementById('prodNama').value,
+                    kategori: document.getElementById('prodKategori').value,
+                    harga: parseInt(document.getElementById('prodHarga').value),
+                    stok: parseInt(document.getElementById('prodStok').value),
+                    gambar: document.getElementById('prodGambar').value,
+                    deskripsi: document.getElementById('prodDeskripsi').value,
+                    tersedia: parseInt(document.getElementById('prodStok').value) > 0 // Tersedia jika stok > 0
+                };
+
+                // Mengambil seluruh produk yang ada saat ini dari LocalStorage
+                const products = getProducts();
+                
+                // Jika menambahkan produk baru
+                if (isNew) {
+                    // Masukkan data produk baru ke array produk
+                    products.push(productData);
+                    showToast('Produk berhasil ditambahkan!');
+                } else {
+                    // Jika mengedit, cari indeks produk lama berdasarkan ID produk
+                    const idx = products.findIndex(p => p.id === id);
+                    if (idx > -1) {
+                        // Perbarui data produk pada indeks tersebut dengan data baru
+                        products[idx] = productData;
+                        showToast('Produk berhasil diperbarui!');
+                    }
+                }
+                
+                // Menyimpan array produk yang diperbarui ke path 'products' di Firebase Realtime Database
+                db.ref('products').set(products).then(() => {
+                    // Tutup modal form setelah data berhasil tersimpan di Firebase
+                    closeModal('productModal');
+                }).catch(err => {
+                    console.error("Gagal menyimpan ke Firebase:", err);
+                    showToast('Gagal menyimpan ke database cloud!', 'error');
+                });
+            });
+        });
+
+        // Fungsi untuk me-render tabel daftar produk admin secara dinamis
+        function renderProductsTable() {
+            // Mengambil daftar produk
+            const products = getProducts();
+            const tbody = document.getElementById('productsTableBody');
+            
+            // Jika produk kosong
+            if (products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4">Belum ada produk.</td></tr>';
+                return;
+            }
+
+            // Menyusun baris-baris tabel produk dinamis
+            tbody.innerHTML = products.map((p, index) => {
+                // Menentukan warna tulisan stok berdasarkan sisa stok puding
+                // Hijau jika > 10, Orange jika > 0, Merah jika habis (0)
+                const stockColor = p.stok > 10 ? 'color: #2ECC71;' : p.stok > 0 ? 'color: #F39C12;' : 'color: #E74C3C;';
+                
+                return `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>
+                            <!-- Foto produk dengan fallback otomatis jika gambar gagal termuat -->
+                            <img src="../${p.gambar}" alt="${p.nama}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://placehold.co/50/E6CCFF/9B59B6'">
+                        </td>
+                        <td style="font-weight: 600;">${p.nama}</td>
+                        <td><span class="badge" style="background: var(--bg-light); color: var(--purple-accent);">${p.kategori}</span></td>
+                        <td>Rp ${p.harga.toLocaleString('id-ID')}</td>
+                        <td style="font-weight: bold; ${stockColor}">${p.stok}</td>
+                        <td>
+                            <!-- Tombol Edit -->
+                            <button onclick="editProduct('${p.id}')" class="btn" style="background: var(--lavender); color: var(--purple-accent); padding: 5px 10px; margin-right: 5px;">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <!-- Tombol Hapus -->
+                            <button onclick="deleteProduct('${p.id}')" class="btn" style="background: #FDEDEC; color: #E74C3C; padding: 5px 10px;">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join(''); // Menggabungkan baris HTML menjadi satu string
+        }
+
+        // Jendela pembantu untuk membuka formulir modal tambah produk
+        window.openProductModal = function() {
+            // Mereset isi formulir agar bersih
+            document.getElementById('productForm').reset();
+            // Mengosongkan input ID produk tersembunyi
+            document.getElementById('prodId').value = '';
+            // Mengubah judul modal menjadi tambah produk
+            document.getElementById('modalTitle').textContent = 'Tambah Produk';
+            // Membuka modal
+            openModal('productModal');
+        };
+
+        // Fungsi global untuk membuka formulir modal edit produk dan memuat data produk ke form
+        window.editProduct = function(id) {
+            const products = getProducts();
+            // Mencari objek produk terpilih berdasarkan ID
+            const product = products.find(p => p.id === id);
+            
+            if (product) {
+                // Memasukkan data produk ke masing-masing input form
+                document.getElementById('prodId').value = product.id;
+                document.getElementById('prodNama').value = product.nama;
+                document.getElementById('prodKategori').value = product.kategori;
+                document.getElementById('prodHarga').value = product.harga;
+                document.getElementById('prodStok').value = product.stok;
+                document.getElementById('prodGambar').value = product.gambar;
+                document.getElementById('prodDeskripsi').value = product.deskripsi;
+                
+                // Mengubah judul modal menjadi edit produk
+                document.getElementById('modalTitle').textContent = 'Edit Produk';
+                // Membuka modal
+                openModal('productModal');
+            }
+        };
+
+        // Fungsi global untuk menghapus produk dari database
+        window.deleteProduct = function(id) {
+            // Meminta konfirmasi pembatalan/penghapusan dari pengguna
+            if (confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+                let products = getProducts();
+                // Menyaring array untuk membuang produk yang memiliki ID terpilih
+                products = products.filter(p => p.id !== id);
+                // Simpan daftar produk terbaru hasil penyaringan ke Firebase
+                db.ref('products').set(products).then(() => {
+                    // Tampilkan toast pemberitahuan sukses hapus
+                    showToast('Produk dihapus!', 'error'); 
+                }).catch(err => {
+                    console.error("Gagal menghapus dari Firebase:", err);
+                    showToast('Gagal menghapus produk dari database cloud!', 'error');
+                });
+            }
+        };
+    </script>
+</body>
+</html>

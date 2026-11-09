@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - WarungPudding</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="p-3 text-center mb-4 mt-3">
+                <i class="fas fa-user-shield fa-4x mb-2" style="color: var(--purple-accent);"></i>
+                <h3 id="displayUserName">Admin</h3>
+                <span class="badge" style="background: var(--pink-soft); color: var(--text-dark);">Administrator</span>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="sidebar-link active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="kelola-produk.html" class="sidebar-link">
+                    <i class="fas fa-box-open"></i> Kelola Produk
+                </a>
+                <a href="laporan.html" class="sidebar-link">
+                    <i class="fas fa-chart-bar"></i> Laporan
+                </a>
+                <a href="#" onclick="logout(); return false;" class="sidebar-link" style="color: #E74C3C;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-tachometer-alt" style="color: var(--purple-accent);"></i> Dashboard Admin</h2>
+            </div>
+            
+            <!-- Stats -->
+            <div class="stats-grid mb-4">
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Pesanan</h4>
+                        <p id="statTotalPesanan">0</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Produk</h4>
+                        <p id="statTotalProduk">0</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Pesanan Hari Ini</h4>
+                        <p id="statPesananHariIni">0</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card stat-card">
+                    <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent);">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h4>Total Pendapatan</h4>
+                        <p id="statPendapatan">Rp 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-3" style="flex-wrap: wrap;">
+                <!-- Chart -->
+                <div class="dashboard-card" style="flex: 2; min-width: 300px;">
+                    <h3 class="mb-3"><i class="fas fa-chart-line" style="color: var(--purple-accent);"></i> Grafik Pesanan 7 Hari Terakhir</h3>
+                    <canvas id="ordersChart" height="150"></canvas>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="dashboard-card" style="flex: 1; min-width: 300px;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 style="margin: 0;"><i class="fas fa-history" style="color: var(--purple-accent);"></i> Pesanan Terbaru</h3>
+                        <a href="laporan.html" style="color: var(--purple-accent); font-size: 0.9rem;">Lihat Semua</a>
+                    </div>
+                    
+                    <div id="recentOrdersList">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/firebase-sync.js"></script>
+
+    <!-- Scripts -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Menunggu seluruh elemen HTML halaman selesai dimuat (DOM ready)
+        document.addEventListener('DOMContentLoaded', () => {
+            // Melindungi halaman: memeriksa apakah peran pengguna saat ini adalah 'admin'
+            const user = checkAuth('admin');
+            // Jika tidak terverifikasi atau bukan admin, hentikan proses (checkAuth melakukan redirect otomatis)
+            if (!user) return;
+
+            // Mendapatkan elemen canvas 2D untuk menggambar grafik pesanan menggunakan Chart.js
+            const ctx = document.getElementById('ordersChart').getContext('2d');
+            
+            // Konfigurasi data untuk grafik pesanan mingguan
+            const chartData = {
+                // Sumbu X: daftar hari dalam seminggu
+                labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+                datasets: [{
+                    label: 'Jumlah Pesanan', // Label dataset saat kursor diarahkan ke batang grafik
+                    data: [12, 19, 15, 8, 22, 30, 25], // Data dummy jumlah pesanan per hari
+                    backgroundColor: 'rgba(155, 89, 182, 0.5)', // Warna latar batang grafik (Purple Accent semi-transparan)
+                    borderColor: '#9B59B6', // Warna garis tepi batang grafik (Purple Accent solid)
+                    borderWidth: 2, // Ketebalan garis tepi sebesar 2 piksel
+                    borderRadius: 5 // Membuat sudut atas batang grafik melengkung halus (rounded bar corners)
+                }]
+            };
+            
+            // Membuat instansiasi grafik baru bertipe Bar Chart
+            new Chart(ctx, {
+                type: 'bar', // Jenis grafik: Batang (Bar Chart)
+                data: chartData, // Memasukkan konfigurasi data yang telah didefinisikan sebelumnya
+                options: {
+                    responsive: true, // Grafik otomatis menyesuaikan ukuran layar agar responsif
+                    plugins: { 
+                        legend: { display: false } // Menyembunyikan tampilan legenda dataset
+                    },
+                    scales: { 
+                        y: { beginAtZero: true } // Sumbu Y dimulai dari angka 0
+                    }
+                }
+            });
+
+            // Fungsi utama untuk me-render statistik dan daftar pesanan terbaru di dashboard admin
+            function refreshDashboard() {
+                // Mengambil data pesanan dan produk dari LocalStorage
+                const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
+                const products = JSON.parse(localStorage.getItem('wp_products')) || [];
+
+                // Menampilkan jumlah total pesanan dan total produk terdaftar ke elemen HTML
+                document.getElementById('statTotalPesanan').textContent = orders.length;
+                document.getElementById('statTotalProduk').textContent = products.length;
+
+                // Mendapatkan string tanggal hari ini (toDateString)
+                const today = new Date().toDateString();
+                // Menyaring daftar pesanan khusus yang dibuat pada hari ini
+                const todayOrders = orders.filter(o => {
+                    try { return o.tanggal && new Date(o.tanggal).toDateString() === today; }
+                    catch(e) { return false; }
+                });
+                // Menampilkan jumlah pesanan hari ini
+                document.getElementById('statPesananHariIni').textContent = todayOrders.length;
+
+                // Menghitung total pendapatan dari seluruh pesanan yang berstatus "Selesai"
+                const totalRevenue = orders
+                    .filter(o => o.status === 'Selesai')
+                    .reduce((sum, o) => sum + (o.total || 0), 0);
+                // Menampilkan total pendapatan yang sudah diformat dengan Rupiah
+                document.getElementById('statPendapatan').textContent = formatRupiah(totalRevenue);
+
+                // Mendapatkan elemen kontainer daftar pesanan terbaru
+                const recentOrdersList = document.getElementById('recentOrdersList');
+                // Mengambil maksimal 5 pesanan terbaru (membalikkan urutan array untuk urutan terbaru dahulu)
+                const recentOrders = [...orders].reverse().slice(0, 5);
+
+                // Jika belum ada pesanan masuk
+                if (recentOrders.length === 0) {
+                    recentOrdersList.innerHTML = `
+                        <div class="text-center py-4" style="padding: 30px;">
+                            <i class="fas fa-inbox fa-2x" style="color: var(--lavender); margin-bottom: 10px;"></i>
+                            <p class="text-muted">Belum ada pesanan masuk.</p>
+                            <p class="text-muted" style="font-size: 0.85rem;">Pesanan akan muncul setelah pelanggan melakukan checkout.</p>
+                        </div>
+                    `;
+                } else {
+                    // Menyusun item daftar pesanan terbaru secara dinamis
+                    recentOrdersList.innerHTML = recentOrders.map(o => {
+                        // Menentukan kelas warna lencana status pesanan
+                        let badgeClass = o.status === 'Diproses' ? 'badge-diproses' : 
+                                       o.status === 'Siap' ? 'badge-siap' : 'badge-selesai';
+                        // Memformat nominal total belanjaan
+                        const totalDisplay = o.total ? formatRupiah(o.total) : 'Rp 0';
+                        
+                        return `
+                            <div style="padding: 10px 0; border-bottom: 1px solid #EEE; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <p style="font-weight: bold; margin: 0; font-size: 0.95rem;">${o.id || '-'}</p>
+                                    <p style="font-size: 0.85rem; color: var(--text-light); margin: 0;">${o.pelanggan || '-'}</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="badge ${badgeClass}" style="font-size: 0.75rem;">${o.status || '-'}</span>
+                                    <p style="font-size: 0.85rem; font-weight: bold; margin: 5px 0 0;">${totalDisplay}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join(''); // Menggabungkan list HTML menjadi satu string
+                }
+            }
+
+            // Memanggil fungsi refreshDashboard untuk menampilkan data awal
+            refreshDashboard();
+
+            // Mendengarkan pembaruan pesanan & produk secara real-time via Firebase sync
+            window.addEventListener('wp_orders_sync', () => {
+                refreshDashboard(); // Update dashboard jika ada pesanan baru
+            });
+            window.addEventListener('wp_products_sync', () => {
+                refreshDashboard(); // Update dashboard jika ada perubahan produk/stok
+            });
+        });
+    </script>
+</body>
+</html>

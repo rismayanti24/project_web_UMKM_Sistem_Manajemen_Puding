@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Stok - Karyawan WarungPudding</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <style>
+        .sidebar-link i, .stat-icon i, .status-tab i { color: var(--purple-accent); }
+        
+        /* Stock Controls */
+        .stock-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-light);
+            padding: 4px 10px;
+            border-radius: 30px;
+            border: 1px solid rgba(155, 89, 182, 0.15);
+        }
+        .stock-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: var(--white);
+            color: var(--purple-accent);
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+        .stock-btn:hover {
+            background: var(--purple-accent);
+            color: var(--white);
+            transform: scale(1.05);
+        }
+        .stock-val {
+            font-weight: 700;
+            font-size: 0.95rem;
+            min-width: 25px;
+            text-align: center;
+            color: var(--text-dark);
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        .status-available {
+            background: #E8F8F5;
+            color: #1ABC9C;
+        }
+        .status-unavailable {
+            background: #FDEDEC;
+            color: #E74C3C;
+        }
+        .status-badge:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .quick-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-set-available {
+            background: var(--lavender);
+            color: var(--purple-dark);
+        }
+        .btn-set-unavailable {
+            background: #FDEDEC;
+            color: #E74C3C;
+        }
+        .quick-action-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="p-3 text-center mb-4 mt-3">
+                <i class="fas fa-user-circle fa-4x mb-2" style="color: var(--purple-accent);"></i>
+                <h3 id="displayUserName">Karyawan</h3>
+                <span class="badge" style="background: var(--lavender); color: var(--purple-accent);">Stand GANET</span>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="pesanan.html" class="sidebar-link">
+                    <i class="fas fa-clipboard-list"></i> Pesanan Masuk
+                </a>
+                <a href="stok.html" class="sidebar-link active">
+                    <i class="fas fa-cookie-bite"></i> Kelola Stok
+                </a>
+                <a href="#" onclick="logout(); return false;" class="sidebar-link" style="color: #E74C3C;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2 class="mb-4"><i class="fas fa-cookie-bite" style="color: var(--purple-accent);"></i> Kelola Stok Puding</h2>
+            
+            <div class="dashboard-card">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>No.</th>
+                                <th>Gambar</th>
+                                <th>Nama Produk</th>
+                                <th>Kategori</th>
+                                <th>Status</th>
+                                <th>Stok Saat Ini</th>
+                                <th>Aksi Cepat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsTableBody">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/firebase-sync.js"></script>
+
+    <!-- Scripts -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Menunggu seluruh elemen HTML halaman web selesai dimuat secara penuh
+        document.addEventListener('DOMContentLoaded', () => {
+            // Melindungi halaman: memeriksa apakah peran pengguna saat ini adalah 'karyawan'
+            const user = checkAuth('karyawan');
+            // Jika tidak terverifikasi atau bukan karyawan, batalkan pemuatan naskah script
+            if (!user) return;
+
+            // Mendapatkan kontainer elemen body tabel tempat menampilkan produk
+            const productsTableBody = document.getElementById('productsTableBody');
+
+            // Fungsi utama untuk memuat data produk ke tabel
+            function renderProducts() {
+                // Mengambil daftar produk dari LocalStorage, jika kosong inisialisasi sebagai array kosong []
+                const products = JSON.parse(localStorage.getItem('wp_products')) || [];
+
+                // Jika data produk belum ada sama sekali
+                if (products.length === 0) {
+                    // Tampilkan baris pemberitahuan bahwa produk kosong
+                    productsTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center" style="padding: 40px;">
+                                <i class="fas fa-box-open fa-3x" style="color: var(--lavender); margin-bottom: 15px; display: block;"></i>
+                                <p style="color: var(--text-light);">Belum ada produk yang terdaftar.</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                // Menyusun baris tabel produk secara dinamis menggunakan perulangan map()
+                productsTableBody.innerHTML = products.map((p, idx) => {
+                    // Memeriksa status ketersediaan berdasarkan jumlah stok aktif
+                    const isAvailable = p.stok > 0;
+                    // Menentukan kelas CSS visual tombol status (hijau jika tersedia, merah jika habis)
+                    const statusClass = isAvailable ? 'status-available' : 'status-unavailable';
+                    // Menentukan teks status
+                    const statusText = isAvailable ? 'Tersedia' : 'Habis';
+
+                    // Mengembalikan baris baris tabel HTML produk
+                    return `
+                        <tr>
+                            <td>${idx + 1}</td>
+                            <td>
+                                <!-- Foto produk dengan fallback otomatis jika url gambar bermasalah -->
+                                <img src="../${p.gambar}" alt="${p.nama}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" onerror="this.src='https://placehold.co/50/E6CCFF/9B59B6?text=Puding'">
+                            </td>
+                            <td style="font-weight: 600;">${p.nama}</td>
+                            <td><span class="badge" style="background: var(--bg-light); color: var(--purple-accent);">${p.kategori}</span></td>
+                            <td>
+                                <!-- Tombol status interaktif untuk mengubah status stok secara langsung -->
+                                <button onclick="toggleStatus('${p.id}', ${p.stok})" class="status-badge ${statusClass}">
+                                    <i class="fas ${isAvailable ? 'fa-check-circle' : 'fa-times-circle'} fa-fw"></i> ${statusText}
+                                </button>
+                            </td>
+                            <td>
+                                <!-- Tombol minus & plus untuk pengaturan kuantitas stok secara presisi -->
+                                <div class="stock-control">
+                                    <button onclick="changeStock('${p.id}', -1)" class="stock-btn"><i class="fas fa-minus"></i></button>
+                                    <span class="stock-val">${p.stok}</span>
+                                    <button onclick="changeStock('${p.id}', 1)" class="stock-btn"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </td>
+                            <td>
+                                <!-- Tombol aksi cepat untuk mempermudah operasional karyawan stand -->
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="setQuickStock('${p.id}', 0)" class="quick-action-btn btn-set-unavailable">
+                                        <i class="fas fa-ban fa-fw"></i> Set Habis
+                                    </button>
+                                    <button onclick="setQuickStock('${p.id}', 20)" class="quick-action-btn btn-set-available">
+                                        <i class="fas fa-check fa-fw"></i> Set 20
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join(''); // Menggabungkan seluruh baris HTML menjadi satu string utuh
+            }
+
+            // Mendengarkan pembaruan data real-time produk dari Firebase sync event
+            window.addEventListener('wp_products_sync', () => {
+                // Render ulang daftar produk tanpa refresh halaman saat ada data terubah
+                renderProducts();
+            });
+
+            // Fungsi global untuk menaikkan atau menurunkan jumlah stok produk secara presisi (+1/-1)
+            window.changeStock = function(prodId, delta) {
+                // Mengambil produk lokal
+                const products = JSON.parse(localStorage.getItem('wp_products')) || [];
+                // Mencari indeks produk terkait berdasarkan ID
+                const idx = products.findIndex(p => p.id === prodId);
+                if (idx > -1) {
+                    // Hitung jumlah stok baru, batas minimal adalah 0 (stok tidak boleh negatif)
+                    const newStock = Math.max(0, products[idx].stok + delta);
+                    // Lakukan pembaruan jika nilainya memang berubah
+                    if (products[idx].stok !== newStock) {
+                        products[idx].stok = newStock;
+                        // Set ketersediaan produk (true jika stok > 0, false jika stok 0)
+                        products[idx].tersedia = newStock > 0;
+                        // Simpan kembali array produk yang diperbarui ke Firebase cloud
+                        db.ref('products').set(products).then(() => {
+                            // Tampilkan toast info perubahan stok sukses
+                            showToast(`Stok ${products[idx].nama} diperbarui menjadi ${newStock}!`);
+                        }).catch(err => {
+                            console.error("Gagal update stok di Firebase:", err);
+                            showToast('Gagal mengubah stok di database cloud!', 'error');
+                        });
+                    }
+                }
+            };
+
+            // Fungsi global untuk mengubah status ketersediaan puding secara instan (Tersedia <-> Habis)
+            window.toggleStatus = function(prodId, currentStock) {
+                const products = JSON.parse(localStorage.getItem('wp_products')) || [];
+                const idx = products.findIndex(p => p.id === prodId);
+                if (idx > -1) {
+                    // Jika stok aktif > 0, set stok menjadi 0 (Habis). Jika kosong, set stok ke default 20 (Tersedia)
+                    const newStock = currentStock > 0 ? 0 : 20;
+                    products[idx].stok = newStock;
+                    products[idx].tersedia = newStock > 0;
+                    // Kirim pembaruan ke Firebase
+                    db.ref('products').set(products).then(() => {
+                        showToast(`Status ${products[idx].nama} diubah menjadi ${newStock > 0 ? 'Tersedia' : 'Habis'}!`);
+                    }).catch(err => {
+                        console.error("Gagal toggle status di Firebase:", err);
+                        showToast('Gagal mengubah status di database cloud!', 'error');
+                    });
+                }
+            };
+
+            // Fungsi global untuk aksi cepat menyetel jumlah stok ke angka tertentu (misal: 0 atau 20)
+            window.setQuickStock = function(prodId, targetStock) {
+                const products = JSON.parse(localStorage.getItem('wp_products')) || [];
+                const idx = products.findIndex(p => p.id === prodId);
+                if (idx > -1) {
+                    // Hanya perbarui jika nilai stok target berbeda dengan stok saat ini
+                    if (products[idx].stok !== targetStock) {
+                        products[idx].stok = targetStock;
+                        products[idx].tersedia = targetStock > 0;
+                        // Kirim pembaruan ke Firebase
+                        db.ref('products').set(products).then(() => {
+                            showToast(`Stok ${products[idx].nama} diset ke ${targetStock}!`);
+                        }).catch(err => {
+                            console.error("Gagal set quick stock di Firebase:", err);
+                            showToast('Gagal mengubah stok di database cloud!', 'error');
+                        });
+                    }
+                }
+            };
+
+            // Panggilan pertama render produk untuk menampilkan data awal saat halaman selesai dimuat
+            renderProducts();
+        });
+    </script>
+</body>
+</html>

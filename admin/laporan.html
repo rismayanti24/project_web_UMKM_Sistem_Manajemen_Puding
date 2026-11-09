@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Penjualan - Admin WarungPudding</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Dashboard Layout -->
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="p-3 text-center mb-4 mt-3">
+                <i class="fas fa-user-shield fa-4x mb-2" style="color: var(--purple-accent);"></i>
+                <h3 id="displayUserName">Admin</h3>
+                <span class="badge" style="background: var(--pink-soft); color: var(--text-dark);">Administrator</span>
+            </div>
+            
+            <nav class="sidebar-menu">
+                <a href="dashboard.html" class="sidebar-link">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="kelola-produk.html" class="sidebar-link">
+                    <i class="fas fa-box-open"></i> Kelola Produk
+                </a>
+                <a href="laporan.html" class="sidebar-link active">
+                    <i class="fas fa-chart-bar"></i> Laporan
+                </a>
+                <a href="#" onclick="logout(); return false;" class="sidebar-link" style="color: #E74C3C;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-chart-bar" style="color: var(--purple-accent);"></i> Laporan Penjualan</h2>
+            </div>
+            
+            <!-- Filters -->
+            <div class="dashboard-card mb-4 d-flex gap-3 align-items-center" style="padding: 15px 20px;">
+                <span style="font-weight: bold; color: var(--text-light);"><i class="fas fa-filter"></i> Filter:</span>
+                <button class="btn btn-primary" style="padding: 5px 15px; border-radius: 8px;">Hari Ini</button>
+                <button class="btn btn-outline" style="padding: 5px 15px; border-radius: 8px;">Minggu Ini</button>
+                <button class="btn btn-outline" style="padding: 5px 15px; border-radius: 8px;">Bulan Ini</button>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid mb-4" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="dashboard-card stat-card" style="text-align: center; flex-direction: column; padding: 30px;">
+                    <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent); margin-bottom: 15px;">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="stat-info text-center w-100">
+                        <h4 style="font-size: 1rem;">Total Pesanan</h4>
+                        <p id="lapTotalPesanan" style="font-size: 2rem;">0</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card stat-card" style="text-align: center; flex-direction: column; padding: 30px;">
+                    <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent); margin-bottom: 15px;">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info text-center w-100">
+                        <h4 style="font-size: 1rem;">Produk Terlaris</h4>
+                        <p id="lapTerlaris" style="font-size: 1.2rem; margin-top: 5px; color: var(--purple-accent);">-</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card stat-card" style="text-align: center; flex-direction: column; padding: 30px;">
+                    <div class="stat-icon" style="background: var(--lavender); color: var(--purple-accent); margin-bottom: 15px;">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="stat-info text-center w-100">
+                        <h4 style="font-size: 1rem;">Total Pendapatan</h4>
+                        <p id="lapTotalPendapatan" style="font-size: 2rem;">Rp 0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div class="dashboard-card mb-4">
+                <h3 class="mb-3"><i class="fas fa-chart-area" style="color: var(--purple-accent);"></i> Grafik Pendapatan</h3>
+                <canvas id="revenueChart" height="100"></canvas>
+            </div>
+
+            <!-- Detail Table -->
+            <div class="dashboard-card">
+                <h3 class="mb-3"><i class="fas fa-list-alt" style="color: var(--purple-accent);"></i> Detail Pesanan Selesai</h3>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>No. Pesanan</th>
+                                <th>Pelanggan</th>
+                                <th>Item</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lapTableBody">
+                            <!-- Injected via JS -->
+                        </tbody>
+                    </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/firebase-sync.js"></script>
+
+    <!-- Scripts -->
+    <script src="../js/auth.js"></script>
+    <script src="../js/main.js"></script>
+    <script>
+        // Menunggu seluruh struktur HTML selesai dimuat (DOM ready) sebelum menjalankan kode JS
+        document.addEventListener('DOMContentLoaded', () => {
+            // Melindungi halaman: memeriksa hak akses pengguna. Hanya peran 'admin' yang boleh masuk
+            const user = checkAuth('admin');
+            // Jika pengguna tidak terverifikasi atau bukan admin, hentikan proses (halaman dialihkan oleh checkAuth)
+            if (!user) return;
+
+            // Mendapatkan elemen canvas 2D untuk merender grafik Chart.js
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            
+            // Konfigurasi data untuk grafik pendapatan mingguan
+            const chartData = {
+                // Label sumbu X: Menampilkan hari-hari dalam seminggu
+                labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+                datasets: [{
+                    label: 'Pendapatan (Rp)', // Label dataset saat kursor diarahkan ke grafik
+                    data: [150000, 320000, 210000, 180000, 450000, 850000, 720000], // Data dummy pendapatan per hari
+                    backgroundColor: 'rgba(255, 182, 193, 0.5)', // Warna latar area grafik (Pink Soft dengan transparansi)
+                    borderColor: '#FFB6C1', // Warna garis luar grafik (Pink Soft solid)
+                    borderWidth: 2, // Ketebalan garis grafik sebesar 2 piksel
+                    fill: true, // Mengaktifkan efek pewarnaan area di bawah garis
+                    tension: 0.4 // Membuat lekukan garis grafik menjadi lebih melengkung halus (smooth curve)
+                }]
+            };
+            
+            // Membuat instansiasi grafik baru menggunakan pustaka Chart.js
+            new Chart(ctx, {
+                type: 'line', // Jenis grafik: Garis (Line Chart)
+                data: chartData, // Memasukkan konfigurasi data yang telah dibuat sebelumnya
+                options: {
+                    responsive: true, // Grafik otomatis menyesuaikan ukuran layar (responsif)
+                    plugins: { 
+                        legend: { display: false } // Menyembunyikan kotak legenda di atas grafik
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, // Memaksa nilai sumbu Y dimulai dari angka 0
+                            ticks: {
+                                // Mengubah format tampilan angka di sumbu Y (misal: 100000 menjadi Rp 100k)
+                                callback: function(value) {
+                                    return 'Rp ' + (value/1000) + 'k';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Fungsi utama untuk memuat ulang dan menghitung statistik laporan penjualan
+            function refreshLaporan() {
+                // Mengambil data pesanan dari LocalStorage, jika kosong gunakan array kosong []
+                const orders = JSON.parse(localStorage.getItem('wp_orders')) || [];
+                // Menyaring daftar pesanan yang hanya memiliki status "Selesai" untuk dimasukkan ke laporan
+                const completedOrders = orders.filter(o => o.status === 'Selesai');
+                
+                // Menampilkan total jumlah pesanan selesai ke elemen HTML 'lapTotalPesanan'
+                document.getElementById('lapTotalPesanan').textContent = completedOrders.length;
+
+                // Menghitung total seluruh pendapatan dari seluruh pesanan yang berstatus "Selesai"
+                const totalRevenue = completedOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+                // Menampilkan total pendapatan yang sudah diformat dengan Rupiah ke elemen HTML 'lapTotalPendapatan'
+                document.getElementById('lapTotalPendapatan').textContent = formatRupiah(totalRevenue);
+
+                // Variabel bantu untuk melacak jumlah kemunculan produk terlaris
+                const itemCounts = {};
+                // Iterasi setiap pesanan selesai
+                completedOrders.forEach(o => {
+                    // Memastikan pesanan memiliki item produk di dalamnya
+                    if (o.items && Array.isArray(o.items)) {
+                        // Iterasi setiap jenis barang di dalam pesanan tersebut
+                        o.items.forEach(item => {
+                            // Jika nama produk valid
+                            if (item.nama) {
+                                // Tambahkan atau inisialisasi jumlah kuantitas terjual untuk produk tersebut
+                                itemCounts[item.nama] = (itemCounts[item.nama] || 0) + (item.qty || 1);
+                            }
+                        });
+                    }
+                });
+                
+                // Inisialisasi awal nama produk terlaris dan nilai maksimumnya
+                let bestSeller = '-';
+                let maxCount = 0;
+                // Mencari nama produk dengan total kuantitas penjualan paling besar
+                for (const [name, count] of Object.entries(itemCounts)) {
+                    if (count > maxCount) {
+                        maxCount = count; // Perbarui jumlah terjual terbanyak
+                        bestSeller = name; // Perbarui nama produk terlaris
+                    }
+                }
+                // Menampilkan produk terlaris ke elemen HTML 'lapTerlaris'
+                document.getElementById('lapTerlaris').textContent = bestSeller;
+
+                // Mendapatkan elemen body tabel tempat menampilkan detail transaksi
+                const tbody = document.getElementById('lapTableBody');
+                
+                // Jika tidak ada pesanan berstatus selesai
+                if (completedOrders.length === 0) {
+                    // Masukkan baris kosong berisi pesan bahwa belum ada transaksi selesai
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center py-4" style="padding: 30px;">
+                                <i class="fas fa-clipboard-check fa-2x" style="color: var(--lavender); margin-bottom: 10px; display: block;"></i>
+                                <p class="text-muted">Belum ada pesanan dengan status "Selesai".</p>
+                                <p class="text-muted" style="font-size: 0.85rem;">Ubah status pesanan menjadi Selesai melalui halaman Karyawan.</p>
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    // Render baris tabel secara dinamis dari daftar pesanan selesai
+                    tbody.innerHTML = completedOrders.map(o => {
+                        let dateStr = '-';
+                        try {
+                            // Memformat tanggal pemesanan ke format lokal Indonesia (DD/MM/YYYY HH:MM)
+                            if (o.tanggal) {
+                                const dateObj = new Date(o.tanggal);
+                                dateStr = dateObj.toLocaleDateString('id-ID') + ' ' + dateObj.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+                            }
+                        } catch(e) { dateStr = '-'; }
+                        
+                        let itemNames = '-';
+                        try {
+                            // Menggabungkan nama-nama produk yang dibeli menjadi satu baris teks terpisah koma
+                            if (o.items && Array.isArray(o.items)) {
+                                itemNames = o.items.map(i => `${i.qty || 1}x ${i.nama || 'Produk'} (${i.varian || 'Original'})`).join(', ');
+                            }
+                        } catch(e) { itemNames = '-'; }
+                        
+                        // Menyiapkan nominal total yang telah diformat Rupiah
+                        const totalDisplay = o.total ? formatRupiah(o.total) : 'Rp 0';
+                        
+                        // Mengembalikan string HTML baris tabel untuk pesanan terkait
+                        return `
+                            <tr>
+                                <td style="color: var(--text-light);">${dateStr}</td>
+                                <td><strong>${o.id || '-'}</strong></td>
+                                <td>${o.pelanggan || '-'}</td>
+                                <td style="font-size: 0.9rem;">${itemNames}</td>
+                                <td style="font-weight: bold; color: var(--pink-soft);">${totalDisplay}</td>
+                            </tr>
+                        `;
+                    }).join(''); // Menggabungkan seluruh baris HTML menjadi satu string utuh
+                }
+            }
+
+            // Memanggil fungsi refreshLaporan untuk pengisian data awal saat halaman pertama dibuka
+            refreshLaporan();
+
+            // Mendengarkan event kustom 'wp_orders_sync' (dipicu saat Firebase menyinkronkan data pesanan baru)
+            window.addEventListener('wp_orders_sync', () => {
+                // Muat ulang isi tabel laporan secara otomatis tanpa reload halaman
+                refreshLaporan();
+            });
+        });
+    </script>
+</body>
+</html>
